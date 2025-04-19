@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
@@ -32,4 +33,7 @@ public class Class {
     
     @OneToMany(mappedBy = "classEntity", cascade = CascadeType.ALL)
     private List<Lesson> lessons;
+    
+    @OneToMany(mappedBy = "classEntity", cascade = CascadeType.ALL)
+    private Set<StudentClass> enrolledStudents;
 } 

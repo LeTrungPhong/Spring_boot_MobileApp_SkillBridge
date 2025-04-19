@@ -4,7 +4,6 @@ import com._NguoiDev.SkillBridge.dto.request.ClassCreateRequest;
 import com._NguoiDev.SkillBridge.dto.request.LessonRequest;
 import com._NguoiDev.SkillBridge.dto.response.ClassResponse;
 import com._NguoiDev.SkillBridge.dto.response.LessonResponse;
-import com._NguoiDev.SkillBridge.dto.response.TeacherResponse;
 import com._NguoiDev.SkillBridge.entity.Class;
 import com._NguoiDev.SkillBridge.entity.Lesson;
 import com._NguoiDev.SkillBridge.entity.Teacher;
@@ -129,14 +128,6 @@ public class ClassServiceImpl implements ClassService {
                 .build();
     }
 
-    private TeacherResponse mapToTeacherResponse(Teacher teacher) {
-        return TeacherResponse.builder()
-                .id(teacher.getId())
-                .name(teacher.getName())
-                .email(teacher.getEmail())
-                .phone(teacher.getPhone())
-                .build();
-    }
 
     private ClassResponse mapToClassResponse(Class classEntity) {
         List<LessonResponse> lessonResponses = new ArrayList<>();
@@ -150,7 +141,6 @@ public class ClassServiceImpl implements ClassService {
                 .id(classEntity.getId())
                 .name(classEntity.getName())
                 .numberOfWeeks(classEntity.getNumber_of_weeks())
-                .teacher(mapToTeacherResponse(classEntity.getTeacher()))
                 .createdAt(classEntity.getCreatedAt())
                 .lessons(lessonResponses)
                 .build();

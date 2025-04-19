@@ -6,16 +6,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ClassResponse {
-    private int id;
-    private String name;
-    private int numberOfWeeks;
-    private LocalDateTime createdAt;
-    private List<LessonResponse> lessons;
+public class ClassEnrollmentResponse {
+    private int studentId;
+    private String studentName;
+    private int classId;
+    private String className;
+    private LocalDateTime joinedAt;
+    private boolean active;
 } 
