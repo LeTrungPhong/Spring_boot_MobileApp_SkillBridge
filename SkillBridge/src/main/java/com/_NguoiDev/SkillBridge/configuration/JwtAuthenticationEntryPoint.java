@@ -1,8 +1,8 @@
-package com.hoang.indentity_service.configuration;
+package com._NguoiDev.SkillBridge.configuration;
 
+import com._NguoiDev.SkillBridge.dto.response.ApiResponse;
+import com._NguoiDev.SkillBridge.exception.ErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hoang.indentity_service.dto.response.ApiResponse;
-import com.hoang.indentity_service.exception.ErrorCode;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

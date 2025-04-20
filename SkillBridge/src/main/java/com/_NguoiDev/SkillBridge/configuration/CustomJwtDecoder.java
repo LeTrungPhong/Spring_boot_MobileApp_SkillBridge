@@ -1,14 +1,10 @@
-package com.hoang.indentity_service.configuration;
+package com._NguoiDev.SkillBridge.configuration;
 
-import com.hoang.indentity_service.dto.request.IntrospectRequest;
-import com.hoang.indentity_service.dto.response.IntrospectResponse;
-import com.hoang.indentity_service.exception.AppException;
-import com.hoang.indentity_service.exception.ErrorCode;
-import com.hoang.indentity_service.service.AuthenticationService;
+import com._NguoiDev.SkillBridge.dto.request.IntrospectRequest;
+import com._NguoiDev.SkillBridge.dto.response.IntrospectResponse;
+import com._NguoiDev.SkillBridge.service.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.Jwt;

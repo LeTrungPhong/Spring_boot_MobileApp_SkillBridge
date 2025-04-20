@@ -8,6 +8,8 @@ import com._NguoiDev.SkillBridge.entity.Student;
 import com._NguoiDev.SkillBridge.entity.Teacher;
 import com._NguoiDev.SkillBridge.entity.User;
 import com._NguoiDev.SkillBridge.enums.Role;
+import com._NguoiDev.SkillBridge.exception.AppException;
+import com._NguoiDev.SkillBridge.exception.ErrorCode;
 import com._NguoiDev.SkillBridge.mapper.StudentMapper;
 import com._NguoiDev.SkillBridge.mapper.TeacherMapper;
 import com._NguoiDev.SkillBridge.mapper.UserMapper;
@@ -43,13 +45,13 @@ public class UserService {
         boolean isTeacher = request.getRole().equals(Role.ROLE_TEACHER.getCodeRole());
 
         if (!isStudent&&!isTeacher){
-            throw new RuntimeException("Role is not valid");
+            throw new AppException(ErrorCode.ROLE_INVALID);
         }
 
         if (isStudent && studentRepository.existsByEmail(request.getEmail())){
-            throw new RuntimeException("Email already exists");
+            throw new AppException(ErrorCode.EMAIL_EXISTED);
         }else if (isTeacher && teacherRepository.existsByEmail(request.getEmail())){
-            throw new RuntimeException("Email already exists");
+            throw new AppException(ErrorCode.EMAIL_EXISTED);
         }
 
         User newUser = userMapper.toUser(request);

@@ -1,4 +1,4 @@
-package com.hoang.indentity_service.dto.request;
+package com._NguoiDev.SkillBridge.dto.request;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
