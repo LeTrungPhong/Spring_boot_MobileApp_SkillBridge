@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
 @Entity
 @Data
 @AllArgsConstructor
@@ -22,4 +24,7 @@ public class Student {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "username", nullable = false)
     private User user;
+    
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
+    private Set<StudentClass> enrolledClasses;
 }
