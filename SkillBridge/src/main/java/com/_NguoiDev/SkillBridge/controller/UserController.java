@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserController {
     UserService userService;
-    @PostMapping("register")
+    @PostMapping("/register")
     public ApiResponse<UserResponse> register(@RequestBody UserCreationRequest request) {
         UserResponse userResponse = userService.createUser(request);
         return ApiResponse.<UserResponse>builder()
