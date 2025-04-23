@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Data
@@ -15,7 +16,7 @@ import java.util.List;
 public class ClassCreateRequest {
     private String name;
     private int numberOfWeeks;
-    private int teacherId;
+//    private int teacherId;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
 } 

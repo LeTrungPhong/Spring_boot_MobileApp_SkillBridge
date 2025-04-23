@@ -9,5 +9,5 @@ public interface ClassService {
     ClassResponse createClass(ClassCreateRequest request);
     ClassResponse getClassById(int id);
     List<ClassResponse> getAllClasses();
-    List<ClassResponse> getClassesByTeacher(int teacherId);
+    List<ClassResponse> getClassesByTeacher();
 } 

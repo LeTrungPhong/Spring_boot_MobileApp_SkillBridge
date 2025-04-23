@@ -1,11 +1,13 @@
 package com._NguoiDev.SkillBridge.controller;
 
 import com._NguoiDev.SkillBridge.dto.request.ClassCreateRequest;
+import com._NguoiDev.SkillBridge.dto.response.ApiResponse;
 import com._NguoiDev.SkillBridge.dto.response.ClassResponse;
 import com._NguoiDev.SkillBridge.service.impl.ClassServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,8 +20,15 @@ public class ClassController {
     private final ClassServiceImpl classService;
 
     @PostMapping
-    public ResponseEntity<ClassResponse> createClass(@RequestBody ClassCreateRequest request) {
-        return new ResponseEntity<>(classService.createClass(request), HttpStatus.CREATED);
+    public ApiResponse<ClassResponse> createClass(@RequestBody ClassCreateRequest request) {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("Username: " + auth.getName());
+        System.out.println("Authorities: " + auth.getAuthorities());
+        return ApiResponse.<ClassResponse>builder()
+                .code(1000)
+                .message("success")
+                .result(classService.createClass(request))
+                .build();
     }
 
     @GetMapping("/{id}")
@@ -32,8 +41,12 @@ public class ClassController {
         return ResponseEntity.ok(classService.getAllClasses());
     }
 
-    @GetMapping("/teacher/{teacherId}")
-    public ResponseEntity<List<ClassResponse>> getClassesByTeacher(@PathVariable int teacherId) {
-        return ResponseEntity.ok(classService.getClassesByTeacher(teacherId));
+    @GetMapping("/teacher")
+    public ApiResponse<List<ClassResponse>> getClassesByTeacher() {
+        return ApiResponse.<List<ClassResponse>>builder()
+                .code(1000)
+                .message("success")
+                .result(classService.getClassesByTeacher())
+                .build();
     }
 } 

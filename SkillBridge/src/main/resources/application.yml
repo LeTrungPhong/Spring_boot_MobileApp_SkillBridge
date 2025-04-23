@@ -5,12 +5,12 @@ server:
 
 spring:
   datasource:
-    # url: "jdbc:mysql://localhost:3306/skill_bridge?createDatabaseIfNotExist=true"
-    url: "jdbc:mysql://localhost:3307/skill_bridge?createDatabaseIfNotExist=true"
-    username: root
-    password: 123456
-    # password: 110204
-    driver-class-name: com.mysql.cj.jdbc.Driver
+     url: "jdbc:mysql://localhost:3306/skill_bridge?createDatabaseIfNotExist=true"
+#    url: "jdbc:mysql://localhost:3307/skill_bridge?createDatabaseIfNotExist=true"
+     username: root
+#     password: 123456
+     password: 110204
+     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: create

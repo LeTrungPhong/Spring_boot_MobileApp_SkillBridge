@@ -73,7 +73,7 @@ public class AuthenticationService {
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
                 .subject(user.getUsername())
                 .issuer("skill_bridge")
-                .claim("scope", "ROLE_"+user.getAuthorities().getFirst().getAuthorityId().getAuthority())
+                .claim("scope", user.getAuthorities().getFirst().getAuthorityId().getAuthority())
                 .issueTime(new Date())
                 .jwtID(UUID.randomUUID().toString())
                 .expirationTime(new Date(Instant.now().plus(validDuration, ChronoUnit.SECONDS).toEpochMilli()))

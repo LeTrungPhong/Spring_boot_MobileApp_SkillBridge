@@ -13,6 +13,7 @@ public enum ErrorCode {
     USER_EXISTED(1001, "User existed", HttpStatus.BAD_REQUEST),
     EMAIL_EXISTED(1002, "User existed", HttpStatus.BAD_REQUEST),
     USER_NOT_EXISTED(1005, "User not existed", HttpStatus.NOT_FOUND),
+    TEACHER_NOT_EXISTED(1005, "Teacher not existed", HttpStatus.NOT_FOUND),
     USER_NOT_FOUND(1006, "User not found", HttpStatus.NOT_FOUND),
     UNAUTHENTICATED(1007, "Unauthenticated", HttpStatus.UNAUTHORIZED),
     USERNAME_INVALID(1003, "Username must be at least {min} characters long", HttpStatus.BAD_REQUEST),

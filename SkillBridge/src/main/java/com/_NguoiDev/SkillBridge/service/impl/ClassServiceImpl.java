@@ -7,12 +7,16 @@ import com._NguoiDev.SkillBridge.dto.response.LessonResponse;
 import com._NguoiDev.SkillBridge.entity.Class;
 import com._NguoiDev.SkillBridge.entity.Lesson;
 import com._NguoiDev.SkillBridge.entity.Teacher;
+import com._NguoiDev.SkillBridge.exception.AppException;
+import com._NguoiDev.SkillBridge.exception.ErrorCode;
 import com._NguoiDev.SkillBridge.repository.ClassRepository;
 import com._NguoiDev.SkillBridge.repository.LessonRepository;
 import com._NguoiDev.SkillBridge.repository.TeacherRepository;
 import com._NguoiDev.SkillBridge.service.ClassService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,11 +39,10 @@ public class ClassServiceImpl implements ClassService {
 
     @Override
     @Transactional
+    @PreAuthorize("hasAuthority('ROLE_TEACHER')")
     public ClassResponse createClass(ClassCreateRequest request) {
-        // Find teacher
-        Teacher teacher = teacherRepository.findById(request.getTeacherId())
-                .orElseThrow(() -> new EntityNotFoundException("Teacher not found with id: " + request.getTeacherId()));
-
+        Teacher teacher = teacherRepository.findByUserUsername(SecurityContextHolder.getContext().getAuthentication().getName())
+                .orElseThrow(()->new AppException(ErrorCode.TEACHER_NOT_EXISTED));
         // Create class
         Class classEntity = Class.builder()
                 .name(request.getName())
@@ -62,7 +65,7 @@ public class ClassServiceImpl implements ClassService {
         return mapToClassResponse(savedClass);
     }
 
-    private List<Lesson> generateLessonsForClass(Class classEntity, LocalDateTime startDateTime, 
+    private List<Lesson> generateLessonsForClass(Class classEntity, LocalDateTime startDateTime,
                                                LocalDateTime endDateTime, int numberOfWeeks) {
         List<Lesson> lessons = new ArrayList<>();
         
@@ -107,9 +110,10 @@ public class ClassServiceImpl implements ClassService {
     }
 
     @Override
-    public List<ClassResponse> getClassesByTeacher(int teacherId) {
-        Teacher teacher = teacherRepository.findById(teacherId)
-                .orElseThrow(() -> new EntityNotFoundException("Teacher not found with id: " + teacherId));
+    @PreAuthorize("hasAuthority('ROLE_TEACHER')")
+    public List<ClassResponse> getClassesByTeacher() {
+        Teacher teacher = teacherRepository.findByUserUsername(SecurityContextHolder.getContext().getAuthentication().getName())
+                .orElseThrow(()->new AppException(ErrorCode.TEACHER_NOT_EXISTED));
         
         return classRepository.findByTeacher(teacher).stream()
                 .map(this::mapToClassResponse)
