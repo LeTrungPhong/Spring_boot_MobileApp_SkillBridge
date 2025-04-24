@@ -2,12 +2,14 @@ package com._NguoiDev.SkillBridge.service.impl;
 
 import com._NguoiDev.SkillBridge.dto.request.ClassEnrollmentRequest;
 import com._NguoiDev.SkillBridge.dto.response.ClassEnrollmentResponse;
+import com._NguoiDev.SkillBridge.embedded.AttendanceCheckId;
 import com._NguoiDev.SkillBridge.embedded.StudentClassId;
+import com._NguoiDev.SkillBridge.entity.*;
 import com._NguoiDev.SkillBridge.entity.Class;
-import com._NguoiDev.SkillBridge.entity.Student;
-import com._NguoiDev.SkillBridge.entity.StudentClass;
+import com._NguoiDev.SkillBridge.enums.AttendanceStatus;
 import com._NguoiDev.SkillBridge.exception.AppException;
 import com._NguoiDev.SkillBridge.exception.ErrorCode;
+import com._NguoiDev.SkillBridge.repository.AttendanceCheckRepository;
 import com._NguoiDev.SkillBridge.repository.ClassRepository;
 import com._NguoiDev.SkillBridge.repository.StudentClassRepository;
 import com._NguoiDev.SkillBridge.repository.StudentRepository;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,6 +32,7 @@ public class StudentClassServiceImpl implements StudentClassService {
     private final StudentClassRepository studentClassRepository;
     private final StudentRepository studentRepository;
     private final ClassRepository classRepository;
+    private final AttendanceCheckRepository attendanceCheckRepository;
 
     @Override
     @Transactional
@@ -62,8 +66,48 @@ public class StudentClassServiceImpl implements StudentClassService {
         
         StudentClass savedEnrollment = studentClassRepository.save(studentClass);
         
+        // Create attendance records for each lesson in the class
+        createAttendanceRecordsForStudent(student, classEntity);
+        
         // Return response
         return mapToEnrollmentResponse(savedEnrollment);
+    }
+
+    /**
+     * Creates attendance records for a student for all lessons in a class
+     */
+    private void createAttendanceRecordsForStudent(Student student, Class classEntity) {
+        List<AttendanceCheck> attendanceChecks = new ArrayList<>();
+        
+        if (classEntity.getLessons() != null && !classEntity.getLessons().isEmpty()) {
+            for (Lesson lesson : classEntity.getLessons()) {
+                // Skip if attendance record already exists
+                if (attendanceCheckRepository.existsByStudentAndLesson(student, lesson)) {
+                    continue;
+                }
+                
+                // Create the attendance check ID
+                AttendanceCheckId attendanceCheckId = AttendanceCheckId.builder()
+                        .studentId(student.getId())
+                        .lessonId(lesson.getId())
+                        .build();
+                
+                // Create the attendance check with initial status as ABSENT
+                AttendanceCheck attendanceCheck = AttendanceCheck.builder()
+                        .id(attendanceCheckId)
+                        .student(student)
+                        .lesson(lesson)
+                        .status(AttendanceStatus.ABSENT) // Default status
+                        .build();
+                
+                attendanceChecks.add(attendanceCheck);
+            }
+            
+            // Save all attendance checks if there are any to save
+            if (!attendanceChecks.isEmpty()) {
+                attendanceCheckRepository.saveAll(attendanceChecks);
+            }
+        }
     }
 
     @Override
@@ -104,6 +148,15 @@ public class StudentClassServiceImpl implements StudentClassService {
         // Find enrollment
         StudentClass enrollment = studentClassRepository.findByStudentAndClassEntity(student, classEntity)
                 .orElseThrow(() -> new EntityNotFoundException("Student is not enrolled in this class"));
+        
+        // Delete attendance records for this student and class
+        if (classEntity.getLessons() != null) {
+            for (Lesson lesson : classEntity.getLessons()) {
+                AttendanceCheckId attendanceCheckId = new AttendanceCheckId(student.getId(), lesson.getId());
+                attendanceCheckRepository.findById(attendanceCheckId)
+                        .ifPresent(attendanceCheckRepository::delete);
+            }
+        }
         
         // Delete enrollment
         studentClassRepository.delete(enrollment);
