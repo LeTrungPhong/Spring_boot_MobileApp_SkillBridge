@@ -36,4 +36,7 @@ public class Class {
     
     @OneToMany(mappedBy = "classEntity", cascade = CascadeType.ALL)
     private Set<StudentClass> enrolledStudents;
+
+    @OneToMany(mappedBy = "aClass", cascade = CascadeType.ALL)
+    private List<Assignment> assignments;
 } 

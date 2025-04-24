@@ -18,7 +18,8 @@ public enum ErrorCode {
     UNAUTHENTICATED(1007, "Unauthenticated", HttpStatus.UNAUTHORIZED),
     USERNAME_INVALID(1003, "Username must be at least {min} characters long", HttpStatus.BAD_REQUEST),
     PASSWORD_INVALID(1004, "Password must be at least {min} characters long", HttpStatus.BAD_REQUEST),
-    ACCESS_DENIED(1005, "Access denied", HttpStatus.FORBIDDEN),;
+    ACCESS_DENIED(1005, "Access denied", HttpStatus.FORBIDDEN),
+    CLASS_NOT_FOUND(1010, "Class not existed", HttpStatus.NOT_FOUND),;
 
     private int code;
     private String message;
