@@ -1,8 +1,10 @@
 package com._NguoiDev.SkillBridge.controller;
 
+import com._NguoiDev.SkillBridge.dto.request.AssignmentRequest;
 import com._NguoiDev.SkillBridge.dto.request.ClassCreateRequest;
 import com._NguoiDev.SkillBridge.dto.response.ApiResponse;
 import com._NguoiDev.SkillBridge.dto.response.ClassResponse;
+import com._NguoiDev.SkillBridge.service.AssignmentService;
 import com._NguoiDev.SkillBridge.service.impl.ClassServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -10,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -18,6 +21,7 @@ import java.util.List;
 public class ClassController {
 
     private final ClassServiceImpl classService;
+    private final AssignmentService assignmentService;
 
     @PostMapping
     public ApiResponse<ClassResponse> createClass(@RequestBody ClassCreateRequest request) {
@@ -49,4 +53,5 @@ public class ClassController {
                 .result(classService.getClassesByTeacher())
                 .build();
     }
+
 } 
