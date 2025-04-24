@@ -6,12 +6,15 @@ import com._NguoiDev.SkillBridge.embedded.StudentClassId;
 import com._NguoiDev.SkillBridge.entity.Class;
 import com._NguoiDev.SkillBridge.entity.Student;
 import com._NguoiDev.SkillBridge.entity.StudentClass;
+import com._NguoiDev.SkillBridge.exception.AppException;
+import com._NguoiDev.SkillBridge.exception.ErrorCode;
 import com._NguoiDev.SkillBridge.repository.ClassRepository;
 import com._NguoiDev.SkillBridge.repository.StudentClassRepository;
 import com._NguoiDev.SkillBridge.repository.StudentRepository;
 import com._NguoiDev.SkillBridge.service.StudentClassService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,9 +33,8 @@ public class StudentClassServiceImpl implements StudentClassService {
     @Override
     @Transactional
     public ClassEnrollmentResponse enrollStudentInClass(ClassEnrollmentRequest request) {
-        // Check if student exists
-        Student student = studentRepository.findById(request.getStudentId())
-                .orElseThrow(() -> new EntityNotFoundException("Student not found with id: " + request.getStudentId()));
+        Student student = studentRepository.findByUserUsername(SecurityContextHolder.getContext().getAuthentication().getName())
+                .orElseThrow(()->new AppException(ErrorCode.STUDENT_NOT_EXISTED));
         
         // Check if class exists
         Class classEntity = classRepository.findById(request.getClassId())

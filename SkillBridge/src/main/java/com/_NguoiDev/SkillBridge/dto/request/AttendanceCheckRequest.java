@@ -1,5 +1,6 @@
 package com._NguoiDev.SkillBridge.dto.request;
 
+import com._NguoiDev.SkillBridge.enums.AttendanceStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,7 +10,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ClassEnrollmentRequest {
-//    private int studentId;
-    private int classId;
+public class AttendanceCheckRequest {
+    private int studentId;
+    private int lessonId;
+    private AttendanceStatus status;
 } 
