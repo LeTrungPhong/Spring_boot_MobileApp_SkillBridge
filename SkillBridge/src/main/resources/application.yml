@@ -24,3 +24,6 @@ jwt:
   valid-duration: 3600 #seconds
   refreshable-duration: 360000 #seconds
 
+file:
+  upload-dir: "C:/SkillBridgeUploads/assignment"
+
