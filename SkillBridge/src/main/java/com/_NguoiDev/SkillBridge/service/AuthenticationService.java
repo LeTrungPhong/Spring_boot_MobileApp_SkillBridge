@@ -1,5 +1,6 @@
 package com._NguoiDev.SkillBridge.service;
 
+import com._NguoiDev.SkillBridge.controller.InformationResponse;
 import com._NguoiDev.SkillBridge.dto.request.AuthenticationRequest;
 import com._NguoiDev.SkillBridge.dto.request.IntrospectRequest;
 import com._NguoiDev.SkillBridge.dto.request.LogoutRequest;
@@ -8,9 +9,13 @@ import com._NguoiDev.SkillBridge.dto.response.AuthenticationResponse;
 import com._NguoiDev.SkillBridge.dto.response.IntrospectResponse;
 import com._NguoiDev.SkillBridge.entity.InvalidToken;
 import com._NguoiDev.SkillBridge.entity.User;
+import com._NguoiDev.SkillBridge.enums.Role;
 import com._NguoiDev.SkillBridge.exception.AppException;
 import com._NguoiDev.SkillBridge.exception.ErrorCode;
+import com._NguoiDev.SkillBridge.mapper.InformationMapper;
 import com._NguoiDev.SkillBridge.repository.InvalidTokenRepository;
+import com._NguoiDev.SkillBridge.repository.StudentRepository;
+import com._NguoiDev.SkillBridge.repository.TeacherRepository;
 import com._NguoiDev.SkillBridge.repository.UserRepository;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
@@ -39,6 +44,9 @@ public class AuthenticationService {
 
     UserRepository userRepository;
     InvalidTokenRepository invalidTokenRepository;
+    InformationMapper informationMapper;
+    TeacherRepository teacherRepository;
+    StudentRepository studentRepository;
 
     @NonFinal
     @Value("${jwt.signerKey}")
@@ -61,9 +69,22 @@ public class AuthenticationService {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
         String token = generateToken(userLogIn);
+        InformationResponse info = null;
+        if (userLogIn.getAuthorities().getFirst().getAuthorityId().getAuthority().equals(Role.ROLE_TEACHER.getCodeRole())){
+            info = informationMapper.toInformationResponse(teacherRepository.findByUserUsername(request.getUsername())
+                    .orElseThrow(()->new AppException(ErrorCode.TEACHER_NOT_EXISTED)));
+            info.setRole("TEACHER");
+            info.setUsername(request.getUsername());
+        } else if (userLogIn.getAuthorities().getFirst().getAuthorityId().getAuthority().equals(Role.ROLE_STUDENT.getCodeRole())){
+            info = informationMapper.toInformationResponse(studentRepository.findByUserUsername(request.getUsername())
+                    .orElseThrow(()->new AppException(ErrorCode.STUDENT_NOT_EXISTED)));
+            info.setRole("STUDENT");
+            info.setUsername(request.getUsername());
+        }
         return AuthenticationResponse.builder()
                 .token(token)
                 .authenticated(authenticated)
+                .info(info)
                 .build();
 
     }
