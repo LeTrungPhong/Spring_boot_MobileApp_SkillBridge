@@ -20,6 +20,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -62,6 +65,7 @@ public class AssignmentService {
         assignment.setCreateAt(LocalDateTime.now());
         assignment.setCreateBy(SecurityContextHolder.getContext().getAuthentication().getName());
         assignment.setId(id);
+        assignment.setAClass(Aclass);
         List<Attachment> attachments = new ArrayList<>();
         for (MultipartFile file:assignmentRequest.getFiles()){
             String fileName = file.getOriginalFilename();
@@ -72,12 +76,10 @@ public class AssignmentService {
                     .fileName(fileName)
                     .fileType(file.getContentType())
                     .filePath(filePath.toString())
+                    .assignment(assignment)
                     .build();
             attachments.add(attachment);
-            attachRepository.save(attachment);
-
         }
-        assignment.setAClass(Aclass);
         assignment.setAttachments(attachments);
         assignmentRepository.save(assignment);
     }
@@ -89,5 +91,26 @@ public class AssignmentService {
             assignmentResponses.add(assignmentMapper.toAssignmentResponse(assignment));
         }
         return assignmentResponses;
+    }
+
+    public AssignmentResponse getAssignmentById(String id)  {
+        Assignment assignment = assignmentRepository.getAssignmentsById(id)
+                .orElseThrow(()->new AppException(ErrorCode.ASSIGNMENT_NOT_FOUND));
+        AssignmentResponse assignmentResponse = assignmentMapper.toAssignmentResponse(assignment);
+        List<Attachment> attachments = attachRepository.findAllByAssignmentId(assignmentResponse.getId());
+        List<String> urls = new ArrayList<>();
+        for (Attachment attachment : attachments) {
+            urls.add(attachment.getFileName());
+        }
+        assignmentResponse.setFilesName(urls);
+        return assignmentResponse;
+    }
+
+    public Resource downloadAssignment(int classId, String assignmentId, String fileName) throws MalformedURLException {
+        Path filePath = Paths.get(FILE_DIR+"/"+classId+"/"+assignmentId+"/"+fileName).normalize();
+        if (!Files.exists(filePath)){
+            throw new AppException(ErrorCode.FILE_NOT_FOUND);
+        }
+        return new UrlResource(filePath.toUri());
     }
 }

@@ -20,8 +20,10 @@ public enum ErrorCode {
     PASSWORD_INVALID(1004, "Password must be at least {min} characters long", HttpStatus.BAD_REQUEST),
     ACCESS_DENIED(1005, "Access denied", HttpStatus.FORBIDDEN),
     STUDENT_NOT_EXISTED(1005, "Student not existed", HttpStatus.NOT_FOUND),
-    LESSON_NOT_FOUND(1005, "Lesson not found", HttpStatus.NOT_FOUND);
-    CLASS_NOT_FOUND(1010, "Class not existed", HttpStatus.NOT_FOUND),;
+    LESSON_NOT_FOUND(1005, "Lesson not found", HttpStatus.NOT_FOUND),
+    CLASS_NOT_FOUND(1010, "Class not existed", HttpStatus.NOT_FOUND),
+    ASSIGNMENT_NOT_FOUND(1011, "Assignment not found", HttpStatus.NOT_FOUND),
+    FILE_NOT_FOUND(1012, "File not found", HttpStatus.NOT_FOUND),;
 
     private int code;
     private String message;
