@@ -23,6 +23,7 @@ public enum ErrorCode {
     LESSON_NOT_FOUND(1005, "Lesson not found", HttpStatus.NOT_FOUND),
     CLASS_NOT_FOUND(1010, "Class not existed", HttpStatus.NOT_FOUND),
     ASSIGNMENT_NOT_FOUND(1011, "Assignment not found", HttpStatus.NOT_FOUND),
+    SUBMISSION_NOT_FOUND(1012, "Submission not found", HttpStatus.NOT_FOUND),
     FILE_NOT_FOUND(1012, "File not found", HttpStatus.NOT_FOUND),;
 
     private int code;

@@ -1,9 +1,13 @@
 package com._NguoiDev.SkillBridge.controller;
 
 import com._NguoiDev.SkillBridge.dto.request.AssignmentRequest;
+import com._NguoiDev.SkillBridge.dto.request.SubmissionRequest;
 import com._NguoiDev.SkillBridge.dto.response.ApiResponse;
+import com._NguoiDev.SkillBridge.dto.response.AssignmentAllSubmitResponse;
 import com._NguoiDev.SkillBridge.dto.response.AssignmentResponse;
+import com._NguoiDev.SkillBridge.dto.response.SubmissionResponse;
 import com._NguoiDev.SkillBridge.service.AssignmentService;
+import com._NguoiDev.SkillBridge.service.SubmissionService;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.NonFinal;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,13 +23,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/assignment")
 @RequiredArgsConstructor
 public class AssignmentController {
 
-
+    private final SubmissionService submissionService;
     private final AssignmentService assignmentService;
     @PostMapping("/{classId}")
     public ApiResponse<Void> createAssignment(@ModelAttribute AssignmentRequest request,@PathVariable int classId) throws IOException {
@@ -43,19 +48,64 @@ public class AssignmentController {
     }
 
     @GetMapping("/{classId}/{assignmentId}")
-    public ApiResponse<AssignmentResponse> getAssignment( @PathVariable String assignmentId){
+    public ApiResponse<AssignmentResponse> getOneAssignment(@PathVariable String assignmentId, @RequestBody(required = false) String username, @PathVariable int classId){
         return ApiResponse.<AssignmentResponse>builder()
                 .code(1000)
                 .message("success")
-                .result(assignmentService.getAssignmentById(assignmentId))
+                .result(assignmentService.getAssignmentById(classId, assignmentId, username))
+                .build();
+    }
+
+    @GetMapping("/{classId}/{assignmentId}/all")
+    public ApiResponse<AssignmentAllSubmitResponse> getOneAssignmentAllSubmit(@PathVariable String assignmentId, @PathVariable int classId){
+        return ApiResponse.<AssignmentAllSubmitResponse>builder()
+                .code(1000)
+                .message("success")
+                .result(assignmentService.getAssignmentListSubmitById(assignmentId,  classId))
+                .build();
+    }
+
+
+    @PostMapping("{classId}/{assignmentId}")
+    public ApiResponse<SubmissionResponse> Submission(@ModelAttribute SubmissionRequest request, @PathVariable int classId, @PathVariable String assignmentId) throws IOException {
+        return ApiResponse.<SubmissionResponse>builder()
+                .code(1000)
+                .message("success")
+                .result(submissionService.submit(request, classId, assignmentId))
                 .build();
     }
 
     @GetMapping("/{classId}/{assignmentId}/{fileName}")
-    public ResponseEntity<Resource> downloadFile(@PathVariable int classId , @PathVariable String assignmentId, @PathVariable String fileName) throws MalformedURLException {
+    public ResponseEntity<Resource> downloadAssignmentFile(@PathVariable int classId , @PathVariable String assignmentId, @PathVariable String fileName) throws MalformedURLException {
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment, fileName: \""+ fileName+"\"")
                 .body(assignmentService.downloadAssignment(classId, assignmentId, fileName));
+    }
+
+    @GetMapping("/{classId}/{assignmentId}/result/{fileName}")
+    public ResponseEntity<Resource> downloadSubmitFile(@PathVariable int classId , @PathVariable String assignmentId, @PathVariable String fileName, @RequestBody(required = false) String username) throws MalformedURLException {
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment, fileName: \""+ fileName+"\"")
+                .body(submissionService.downloadSubmission(classId, assignmentId, fileName, username));
+    }
+
+    @DeleteMapping("/{classId}/{assignmentId}")
+    public ApiResponse<Void> deleteAssignment(@PathVariable int classId, @PathVariable String assignmentId){
+        assignmentService.DeleteAssignment(assignmentId, classId);
+        return ApiResponse.<Void>builder()
+                .code(1000)
+                .message("success")
+                .build();
+    }
+
+    @DeleteMapping("/{classId}/{assignmentId}/{submissionId}")
+    public ApiResponse<Void> revertSubmit(@PathVariable String assignmentId, @PathVariable String classId, @PathVariable String submissionId){
+        submissionService.DeleteSubmission(submissionId, assignmentId);
+        return ApiResponse.<Void>builder()
+                .code(1000)
+                .message("success")
+                .build();
     }
 }
