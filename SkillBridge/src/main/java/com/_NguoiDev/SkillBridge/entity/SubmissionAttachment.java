@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Attachment {
+public class SubmissionAttachment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -20,7 +20,6 @@ public class Attachment {
     private String filePath;
 
     @ManyToOne
-    @JoinColumn(name = "assignmentId")
-    private Assignment assignment;
-
+    @JoinColumn(name= "submissionId")
+    private Submission submission;
 }

@@ -25,6 +25,8 @@ public class Assignment {
     @OneToMany(mappedBy = "assignment", cascade = CascadeType.ALL)
     private List<Attachment> attachments;
 
+    @OneToMany(mappedBy = "assignment", cascade = CascadeType.ALL)
+    private List<Submission> submissions;
 
     @ManyToOne
     @JoinColumn(name = "classId")

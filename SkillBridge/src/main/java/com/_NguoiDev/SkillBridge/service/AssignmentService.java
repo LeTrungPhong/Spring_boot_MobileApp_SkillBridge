@@ -1,21 +1,15 @@
 package com._NguoiDev.SkillBridge.service;
 
 import com._NguoiDev.SkillBridge.dto.request.AssignmentRequest;
+import com._NguoiDev.SkillBridge.dto.response.AssignmentAllSubmitResponse;
 import com._NguoiDev.SkillBridge.dto.response.AssignmentResponse;
-import com._NguoiDev.SkillBridge.entity.Assignment;
-import com._NguoiDev.SkillBridge.entity.Attachment;
+import com._NguoiDev.SkillBridge.entity.*;
 import com._NguoiDev.SkillBridge.entity.Class;
-import com._NguoiDev.SkillBridge.entity.Teacher;
 import com._NguoiDev.SkillBridge.exception.AppException;
 import com._NguoiDev.SkillBridge.exception.ErrorCode;
 import com._NguoiDev.SkillBridge.mapper.AssignmentMapper;
-import com._NguoiDev.SkillBridge.repository.AssignmentRepository;
-import com._NguoiDev.SkillBridge.repository.AttachRepository;
-import com._NguoiDev.SkillBridge.repository.ClassRepository;
-import com._NguoiDev.SkillBridge.repository.TeacherRepository;
+import com._NguoiDev.SkillBridge.repository.*;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
@@ -34,10 +28,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -51,6 +42,8 @@ public class AssignmentService {
     AssignmentMapper assignmentMapper;
     ClassRepository classRepository;
     TeacherRepository teacherRepository;
+    SubmissionRepository submissionRepository;
+    SubmissionService submissionService;
     @PreAuthorize("hasAuthority('ROLE_TEACHER')")
     @Transactional
     public void createAssignment(AssignmentRequest assignmentRequest, int classId) throws IOException {
@@ -88,14 +81,28 @@ public class AssignmentService {
         List<Assignment> assignments = assignmentRepository.findAllByaClassId(idClass);
         List<AssignmentResponse> assignmentResponses = new ArrayList<>();
         for (Assignment assignment : assignments) {
-            assignmentResponses.add(assignmentMapper.toAssignmentResponse(assignment));
+            AssignmentResponse a = assignmentMapper.toAssignmentResponse(assignment);
+            a.setFilesName(assignment.getAttachments().stream().map(Attachment::getFileName).toList());
+            assignmentResponses.add(a);
         }
+
+
         return assignmentResponses;
     }
 
-    public AssignmentResponse getAssignmentById(String id)  {
+    public AssignmentResponse getAssignmentById(int classId, String id, String username)  {
+        if (username==null){
+            username = SecurityContextHolder.getContext().getAuthentication().getName();
+        }else{
+            teacherRepository.findByUserUsername(SecurityContextHolder.getContext().getAuthentication().getName())
+                    .orElseThrow(()->new AppException(ErrorCode.ACCESS_DENIED));
+        }
+        System.out.println(username);
         Assignment assignment = assignmentRepository.getAssignmentsById(id)
                 .orElseThrow(()->new AppException(ErrorCode.ASSIGNMENT_NOT_FOUND));
+        if (assignment.getAClass().getId()!=classId){
+            throw new AppException(ErrorCode.ASSIGNMENT_NOT_FOUND);
+        }
         AssignmentResponse assignmentResponse = assignmentMapper.toAssignmentResponse(assignment);
         List<Attachment> attachments = attachRepository.findAllByAssignmentId(assignmentResponse.getId());
         List<String> urls = new ArrayList<>();
@@ -103,6 +110,37 @@ public class AssignmentService {
             urls.add(attachment.getFileName());
         }
         assignmentResponse.setFilesName(urls);
+
+        Submission submission = submissionRepository.getSubmissionByUserUsername(username).orElse(null);
+        if (submission == null) { assignmentResponse.setSubmission(null); }
+        else
+            assignmentResponse.setSubmission(submissionService.getSubmissionById(submission.getId()));
+        return assignmentResponse;
+    }
+
+    public AssignmentAllSubmitResponse getAssignmentListSubmitById(String id, int classId)  {
+        teacherRepository.findByUserUsername(SecurityContextHolder.getContext().getAuthentication().getName())
+                .orElseThrow(()->new AppException(ErrorCode.ACCESS_DENIED));
+        Assignment assignment = assignmentRepository.getAssignmentsById(id)
+                .orElseThrow(()->new AppException(ErrorCode.ASSIGNMENT_NOT_FOUND));
+        if (assignment.getAClass().getId()!=classId){
+            throw new AppException(ErrorCode.ASSIGNMENT_NOT_FOUND);
+        }
+        if (!assignment.getAClass().getTeacher().getUser().getUsername().equals(SecurityContextHolder.getContext().getAuthentication().getName())){
+            throw new AppException(ErrorCode.ACCESS_DENIED);
+        }
+        AssignmentAllSubmitResponse assignmentResponse = assignmentMapper.toAssignmentAllSubmitResponse(assignment);
+        List<Attachment> attachments = attachRepository.findAllByAssignmentId(assignmentResponse.getId());
+        List<String> urls = new ArrayList<>();
+        for (Attachment attachment : attachments) {
+            urls.add(attachment.getFileName());
+        }
+        assignmentResponse.setFilesName(urls);
+
+        List<Submission> submissions = submissionRepository.findAllByAssignmentId(id);
+        if (submissions.isEmpty()) { assignmentResponse.setSubmissionResponses(null); }
+        else
+            assignmentResponse.setSubmissionResponses(submissions.stream().map(value -> submissionService.getSubmissionById(value.getId())).toList());
         return assignmentResponse;
     }
 
@@ -112,5 +150,13 @@ public class AssignmentService {
             throw new AppException(ErrorCode.FILE_NOT_FOUND);
         }
         return new UrlResource(filePath.toUri());
+    }
+
+    @PreAuthorize("hasRole('ROLE_TEACHER')")
+    public void DeleteAssignment(String assignmentId, int classId)  {
+        if (!classRepository.findById(classId).orElseThrow(()->new AppException(ErrorCode.CLASS_NOT_FOUND)).getTeacher().getUser().getUsername().equals(SecurityContextHolder.getContext().getAuthentication().getName())){
+            throw new AppException(ErrorCode.ACCESS_DENIED);
+        }
+        assignmentRepository.delete(assignmentRepository.getAssignmentsById(assignmentId).orElseThrow(()->new AppException(ErrorCode.ASSIGNMENT_NOT_FOUND)));
     }
 }

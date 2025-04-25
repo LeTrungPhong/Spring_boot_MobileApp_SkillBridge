@@ -1,6 +1,5 @@
 package com._NguoiDev.SkillBridge.dto.response;
 
-import com._NguoiDev.SkillBridge.entity.Submission;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,12 +12,12 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AssignmentResponse {
+public class AssignmentAllSubmitResponse {
     private String id;
     private String title;
     private String description;
     private LocalDateTime deadLine;
     private String createBy;
     private List<String> filesName;
-    private SubmissionResponse submission;
+    private List<SubmissionResponse> submissionResponses;
 }

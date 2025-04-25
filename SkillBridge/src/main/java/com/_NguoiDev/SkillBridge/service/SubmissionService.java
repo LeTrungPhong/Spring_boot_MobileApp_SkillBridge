@@ -1,0 +1,126 @@
+package com._NguoiDev.SkillBridge.service;
+
+import com._NguoiDev.SkillBridge.dto.request.SubmissionRequest;
+import com._NguoiDev.SkillBridge.dto.response.SubmissionResponse;
+import com._NguoiDev.SkillBridge.entity.Assignment;
+import com._NguoiDev.SkillBridge.entity.Submission;
+import com._NguoiDev.SkillBridge.entity.SubmissionAttachment;
+import com._NguoiDev.SkillBridge.entity.User;
+import com._NguoiDev.SkillBridge.exception.AppException;
+import com._NguoiDev.SkillBridge.exception.ErrorCode;
+import com._NguoiDev.SkillBridge.mapper.SubmissionMapper;
+import com._NguoiDev.SkillBridge.repository.*;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+public class SubmissionService {
+    SubmissionRepository submissionRepository;
+    UserRepository userRepository;
+    SubmissionMapper submissionMapper;
+    AssignmentRepository assignmentRepository;
+    TeacherRepository teacherRepository;
+    ClassRepository classRepository;
+
+    @NonFinal
+    @Value("${file.upload-dir}")
+    protected String FILE_DIR;
+    public SubmissionResponse submit(SubmissionRequest request, int classId, String assinmentId) throws IOException {
+        User currentUser = userRepository.findById(SecurityContextHolder.getContext().getAuthentication().getName())
+                .orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED));
+        Assignment assignment = assignmentRepository.getAssignmentsById(assinmentId)
+                .orElseThrow(()->new AppException(ErrorCode.ASSIGNMENT_NOT_FOUND));
+        if (assignment.getAClass().getId() != classId) {
+            throw new AppException(ErrorCode.ASSIGNMENT_NOT_FOUND);
+        }
+        System.out.println(currentUser.getUsername()+"submission");
+        Submission submission = submissionMapper.toSubmission(request);
+        submission.setAssignment(assignment);
+        submission.setUser(currentUser);
+        submission.setSubmissionTime(LocalDateTime.now());
+        submission.setId(UUID.randomUUID().toString());
+        List<SubmissionAttachment> submissionAttachments = new ArrayList<>();
+        for (MultipartFile file: request.getFiles()) {
+            String fileName = file.getOriginalFilename();
+            Path filePath = Paths.get(FILE_DIR+"/" + classId+"/"+assinmentId+"/"+currentUser.getUsername()+"/"+fileName);
+            Files.createDirectories(filePath.getParent());
+            file.transferTo(filePath.toFile());
+            SubmissionAttachment submissionAttachment = SubmissionAttachment.builder()
+                    .fileName(fileName)
+                    .fileType(file.getContentType())
+                    .filePath(filePath.toString())
+                    .submission(submission)
+                    .build();
+            submissionAttachments.add(submissionAttachment);
+        }
+        submission.setSubmissionAttachments(submissionAttachments);
+        return getSubmissionById(submissionRepository.save(submission).getId());
+    }
+
+    public SubmissionResponse getSubmissionById(String submissionId) {
+        Submission submission = submissionRepository.getSubmissionById(submissionId).orElse(null);
+        if (submission == null) { return null;}
+        SubmissionResponse submissionResponse = submissionMapper.toSubmissionResponse(submission);
+        List<String> filesNames = submission.getSubmissionAttachments().stream().map(SubmissionAttachment::getFileName).toList();
+        submissionResponse.setFilesNames(filesNames);
+        Assignment assignment = submission.getAssignment();
+        if (submission.getSubmissionTime().isAfter(assignment.getDeadLine())){
+            submissionResponse.setStatus(2);
+        }else{
+            submissionResponse.setStatus(1);
+        }
+        return submissionResponse;
+    }
+
+    public Resource downloadSubmission(int classId, String assignmentId, String fileName, String username) throws MalformedURLException {
+        if (username==null){
+            username = SecurityContextHolder.getContext().getAuthentication().getName();
+        }else {
+            teacherRepository.findByUserUsername(SecurityContextHolder.getContext().getAuthentication().getName())
+                    .orElseThrow(()->new AppException(ErrorCode.ACCESS_DENIED));
+            if (classRepository.findById(classId).orElseThrow(() -> new AppException(ErrorCode.CLASS_NOT_FOUND))
+                    .getTeacher().getUser().getUsername() != (SecurityContextHolder.getContext().getAuthentication().getName())){
+                throw new AppException(ErrorCode.ACCESS_DENIED);
+            }
+        }
+
+        Path filePath = Paths.get(FILE_DIR+"/"+classId+"/"+assignmentId+"/"+username+"/"+fileName).normalize();
+        if (!Files.exists(filePath)){
+            throw new AppException(ErrorCode.FILE_NOT_FOUND);
+        }
+        return new UrlResource(filePath.toUri());
+    }
+
+    public void DeleteSubmission(String submissionId, String assignmentId) {
+        Submission submission = submissionRepository.getSubmissionById(submissionId).orElseThrow(()->new AppException(ErrorCode.SUBMISSION_NOT_FOUND));
+        if (!submission.getAssignment().getId().equals(assignmentId)){
+            throw new AppException(ErrorCode.ASSIGNMENT_NOT_FOUND);
+        }
+        if (!submission.getUser().getUsername().equals(SecurityContextHolder.getContext().getAuthentication().getName())){
+            throw new AppException(ErrorCode.ACCESS_DENIED);
+        }
+        submissionRepository.delete(submission);
+    }
+}
