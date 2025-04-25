@@ -146,6 +146,7 @@ public class ClassServiceImpl implements ClassService {
                 .name(classEntity.getName())
                 .numberOfWeeks(classEntity.getNumber_of_weeks())
                 .createdAt(classEntity.getCreatedAt())
+                .createdBy(SecurityContextHolder.getContext().getAuthentication().getName())
                 .lessons(lessonResponses)
                 .build();
     }

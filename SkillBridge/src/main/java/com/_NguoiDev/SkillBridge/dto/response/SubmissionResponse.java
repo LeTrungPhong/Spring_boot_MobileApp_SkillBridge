@@ -12,11 +12,10 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ClassResponse {
-    private int id;
-    private String name;
-    private int numberOfWeeks;
-    private LocalDateTime createdAt;
-    private String createdBy;
-    private List<LessonResponse> lessons;
-} 
+public class SubmissionResponse {
+    private String id;
+    private LocalDateTime submissionTime;
+    private List<String> filesNames;
+    private int status;
+    private String submissionBy;
+}
