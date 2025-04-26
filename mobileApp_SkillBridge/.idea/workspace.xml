@@ -5,8 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bf2d9b05-5693-4f0e-b726-9fb2cc1fa5fe" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SkillBridge/src/main/java/com/_NguoiDev/SkillBridge/dto/request/LessonRangeRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SkillBridge/src/main/java/com/_NguoiDev/SkillBridge/controller/ClassController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../SkillBridge/src/main/java/com/_NguoiDev/SkillBridge/controller/ClassController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SkillBridge/src/main/java/com/_NguoiDev/SkillBridge/dto/request/ClassCreateRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/../SkillBridge/src/main/java/com/_NguoiDev/SkillBridge/dto/request/ClassCreateRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SkillBridge/src/main/java/com/_NguoiDev/SkillBridge/dto/response/LessonResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/../SkillBridge/src/main/java/com/_NguoiDev/SkillBridge/dto/response/LessonResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SkillBridge/src/main/java/com/_NguoiDev/SkillBridge/service/impl/ClassServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../SkillBridge/src/main/java/com/_NguoiDev/SkillBridge/service/impl/ClassServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,7 +32,7 @@
     "Gradle.mobileApp_SkillBridge.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "method-security-teacher",
+    "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "node.js.detected.package.eslint": "true",
@@ -58,6 +61,7 @@
       <updated>1744944677759</updated>
       <workItem from="1744944679726" duration="1235000" />
       <workItem from="1745408208201" duration="18000" />
+      <workItem from="1745686582745" duration="24000" />
     </task>
     <servers />
   </component>

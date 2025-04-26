@@ -1,6 +1,7 @@
 package com._NguoiDev.SkillBridge.service.impl;
 
 import com._NguoiDev.SkillBridge.dto.request.ClassCreateRequest;
+import com._NguoiDev.SkillBridge.dto.request.LessonRangeRequest;
 import com._NguoiDev.SkillBridge.dto.request.LessonRequest;
 import com._NguoiDev.SkillBridge.dto.response.ClassResponse;
 import com._NguoiDev.SkillBridge.dto.response.LessonResponse;
@@ -21,12 +22,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,49 +52,44 @@ public class ClassServiceImpl implements ClassService {
                 .number_of_weeks(request.getNumberOfWeeks())
                 .createdAt(LocalDateTime.now())
                 .teacher(teacher)
-                .lessons(new ArrayList<>())
                 .build();
-        
+        List<Lesson> lessons =  generateLessonsForClass(classEntity, request.getDateStudy(), request.getNumberOfWeeks());
+        classEntity.setLessons(lessons);
         // Save class
         Class savedClass = classRepository.save(classEntity);
-        
-        // Generate lessons for each week
-        List<Lesson> lessons = generateLessonsForClass(savedClass, request.getStartTime(), 
-                request.getEndTime(), request.getNumberOfWeeks());
-        
-        savedClass.setLessons(lessons);
-        lessonRepository.saveAll(lessons);
+
         
         return mapToClassResponse(savedClass);
     }
 
-    private List<Lesson> generateLessonsForClass(Class classEntity, LocalDateTime startDateTime,
-                                               LocalDateTime endDateTime, int numberOfWeeks) {
+    private List<Lesson> generateLessonsForClass(Class classEntity, Map<String, LessonRangeRequest> dateStudy, int numberOfWeeks) {
+        LocalDate today = LocalDate.now();
         List<Lesson> lessons = new ArrayList<>();
-        
-        // Get the day of week and date from the start time
-        LocalDateTime firstLessonDate = startDateTime;
-        
-        // Generate lessons for each week
-        for (int weekNumber = 0; weekNumber < numberOfWeeks; weekNumber++) {
-            // Calculate the date for this week's lesson by adding 7 days for each week
-            LocalDateTime lessonStartDateTime = firstLessonDate.plusWeeks(weekNumber);
-            LocalDateTime lessonEndDateTime = endDateTime.plusWeeks(weekNumber);
-            
-            // Create lesson for this week
-            Lesson lesson = Lesson.builder()
-                    .classEntity(classEntity)
-                    .lessonDate(lessonStartDateTime.toLocalDate().atStartOfDay()) // Just the date part at midnight
-                    .startTime(lessonStartDateTime)
-                    .endTime(lessonEndDateTime)
-                    .isCompleted(false)
-                    .room("TBD") // Default room, can be updated later
-                    .notes("Lesson for week " + (weekNumber + 1))
-                    .build();
-            
-            lessons.add(lesson);
+        for( int week = 0; week < numberOfWeeks; week++) {
+            for (Map.Entry<String, LessonRangeRequest> day: dateStudy.entrySet()){
+                DayOfWeek dayOfWeek = DayOfWeek.valueOf(day.getKey().toUpperCase());
+                LocalTime startTime =day.getValue().getStartTime();
+                LocalTime endTime =day.getValue().getEndTime();
+
+                LocalDate lessonDate = today.plusWeeks(week);
+                int dayToAdd = dayOfWeek.getValue()-lessonDate.getDayOfWeek().getValue();
+                if (dayToAdd <= 0) {
+                    dayToAdd+=7;
+                }
+                lessonDate = lessonDate.plusDays(dayToAdd);
+
+                Lesson newLesson = Lesson.builder()
+                        .classEntity(classEntity)
+                        .lessonDate(lessonDate.atStartOfDay())
+                        .startTime(lessonDate.atTime(startTime))
+                        .endTime(lessonDate.atTime(endTime))
+                        .isCompleted(false)
+                        .room("TBD") // Default room, can be updated later
+                        .notes("Lesson for week " + (week + 1))
+                        .build();
+                lessons.add(newLesson);
+            }
         }
-        
         return lessons;
     }
 

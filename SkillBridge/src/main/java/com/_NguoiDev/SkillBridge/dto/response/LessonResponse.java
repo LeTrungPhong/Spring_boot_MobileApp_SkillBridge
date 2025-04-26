@@ -13,10 +13,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class LessonResponse {
     private int id;
-    private LocalDateTime endTime;
     private boolean isCompleted;
     private LocalDateTime lessonDate;
     private LocalDateTime startTime;
+    private LocalDateTime endTime;
     private String notes;
     private String room;
 } 
