@@ -34,6 +34,7 @@ import java.util.*;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AssignmentService {
+    private final UserRepository userRepository;
     @NonFinal
     @Value("${file.upload-dir}")
     protected String FILE_DIR;
@@ -44,6 +45,7 @@ public class AssignmentService {
     TeacherRepository teacherRepository;
     SubmissionRepository submissionRepository;
     SubmissionService submissionService;
+    StudentClassRepository studentClassRepository;
     @PreAuthorize("hasAuthority('ROLE_TEACHER')")
     @Transactional
     public void createAssignment(AssignmentRequest assignmentRequest, int classId) throws IOException {
@@ -75,6 +77,14 @@ public class AssignmentService {
         }
         assignment.setAttachments(attachments);
         assignmentRepository.save(assignment);
+        List<User> students = studentClassRepository.findAllByClassEntity_Id(classId).stream().map(value -> value.getStudent().getUser()).toList();
+        for (User user : students) {
+            Set<Assignment> assignments = user.getAssignments();
+            assignments.add(assignment);
+            user.setAssignments(assignments);
+            userRepository.save(user);
+        }
+
     }
 
     public List<AssignmentResponse> getAllAssignments(int idClass)  {
@@ -87,6 +97,19 @@ public class AssignmentService {
         }
 
 
+        return assignmentResponses;
+    }
+
+    public List<AssignmentResponse> getAllMyAssignments(){
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Set<Assignment> assignments = userRepository.findByUsername(username).orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED))
+                .getAssignments();
+        List<AssignmentResponse> assignmentResponses = new ArrayList<>();
+        for (Assignment assignment : assignments) {
+            AssignmentResponse a = assignmentMapper.toAssignmentResponse(assignment);
+            a.setFilesName(assignment.getAttachments().stream().map(Attachment::getFileName).toList());
+            assignmentResponses.add(a);
+        }
         return assignmentResponses;
     }
 

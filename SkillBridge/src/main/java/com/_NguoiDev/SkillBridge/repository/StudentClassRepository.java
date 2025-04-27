@@ -16,4 +16,6 @@ public interface StudentClassRepository extends JpaRepository<StudentClass, Stud
     List<StudentClass> findByClassEntity(Class classEntity);
     Optional<StudentClass> findByStudentAndClassEntity(Student student, Class classEntity);
     boolean existsByStudentAndClassEntity(Student student, Class classEntity);
-} 
+
+    List<StudentClass> findAllByClassEntity_Id(int classEntityId);
+}

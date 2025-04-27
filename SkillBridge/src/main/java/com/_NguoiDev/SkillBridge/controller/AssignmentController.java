@@ -108,4 +108,13 @@ public class AssignmentController {
                 .message("success")
                 .build();
     }
+
+    @GetMapping()
+    public ApiResponse<List<AssignmentResponse>> getAllMyAssignments(){
+        return ApiResponse.<List<AssignmentResponse>>builder()
+                .code(1000)
+                .message("success")
+                .result(assignmentService.getAllMyAssignments())
+                .build();
+    }
 }
