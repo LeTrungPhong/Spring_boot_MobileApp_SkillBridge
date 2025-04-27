@@ -56,9 +56,9 @@ public class AttendanceCheckController {
         return new ResponseEntity<>(attendanceCheckService.checkAttendance(attendanceRequest), HttpStatus.CREATED);
     }
 
-    @GetMapping("/student/{studentId}")
-    public ResponseEntity<List<AttendanceCheckResponse>> getAttendancesByStudent(@PathVariable int studentId) {
-        return ResponseEntity.ok(attendanceCheckService.getAttendancesByStudent(studentId));
+    @GetMapping("/student/{studentId}/{classId}")
+    public ResponseEntity<List<AttendanceCheckResponse>> getAttendancesByStudent(@PathVariable int studentId, @PathVariable int classId) {
+        return ResponseEntity.ok(attendanceCheckService.getAttendancesByStudent(studentId, classId));
     }
 
     @GetMapping("/lesson/{lessonId}")
