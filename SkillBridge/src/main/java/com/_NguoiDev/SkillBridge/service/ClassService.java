@@ -10,4 +10,5 @@ public interface ClassService {
     ClassResponse getClassById(int id);
     List<ClassResponse> getAllClasses();
     List<ClassResponse> getClassesByTeacher();
+    List<ClassResponse> getClassesByStudent();
 } 

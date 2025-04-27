@@ -54,4 +54,12 @@ public class ClassController {
                 .build();
     }
 
-} 
+    @GetMapping("/student")
+    public ApiResponse<List<ClassResponse>> getClassesByStudent() {
+        return ApiResponse.<List<ClassResponse>>builder()
+                .code(1000)
+                .message("success")
+                .result(classService.getClassesByStudent())
+                .build();
+    }
+}
