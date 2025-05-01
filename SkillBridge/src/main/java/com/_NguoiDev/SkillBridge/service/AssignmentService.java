@@ -29,6 +29,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -98,6 +99,17 @@ public class AssignmentService {
 
 
         return assignmentResponses;
+    }
+
+    @PreAuthorize("hasAuthority('ROLE_TEACHER')")
+    public List<AssignmentResponse> getAllMyCreateAssignments(){
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        List<Integer> listClass = classRepository.findAllByTeacherUserUsername(username).stream().map(Class::getId).toList();
+        List<AssignmentResponse> result = new ArrayList<>();
+        for (Integer id : listClass) {
+            result.addAll(getAllAssignments(id));
+        }
+        return result;
     }
 
     public List<AssignmentResponse> getAllMyAssignments(){
