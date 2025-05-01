@@ -24,7 +24,8 @@ public enum ErrorCode {
     CLASS_NOT_FOUND(1010, "Class not existed", HttpStatus.NOT_FOUND),
     ASSIGNMENT_NOT_FOUND(1011, "Assignment not found", HttpStatus.NOT_FOUND),
     SUBMISSION_NOT_FOUND(1012, "Submission not found", HttpStatus.NOT_FOUND),
-    FILE_NOT_FOUND(1012, "File not found", HttpStatus.NOT_FOUND),;
+    FILE_NOT_FOUND(1012, "File not found", HttpStatus.NOT_FOUND),
+    SEND_MESSAGE_FAILED(1013, "Send message failed", HttpStatus.FORBIDDEN),;
 
     private int code;
     private String message;

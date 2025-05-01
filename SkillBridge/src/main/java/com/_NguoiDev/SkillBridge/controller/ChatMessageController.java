@@ -3,6 +3,7 @@ package com._NguoiDev.SkillBridge.controller;
 import com._NguoiDev.SkillBridge.dto.request.ChatHistoryRequest;
 import com._NguoiDev.SkillBridge.dto.request.ChatRequest;
 import com._NguoiDev.SkillBridge.dto.response.ApiResponse;
+import com._NguoiDev.SkillBridge.dto.response.ChatBoxResponse;
 import com._NguoiDev.SkillBridge.dto.response.ChatResponse;
 import com._NguoiDev.SkillBridge.entity.ChatMessage;
 import com._NguoiDev.SkillBridge.repository.ChatMessageRepository;
@@ -34,7 +35,7 @@ public class ChatMessageController {
                 .build();
     }
 
-    @GetMapping("/api/chat")
+    @PostMapping("/api/chat")
     public ApiResponse<List<ChatResponse>> getMessage(@RequestBody ChatHistoryRequest request) {
         return ApiResponse.<List<ChatResponse>>builder()
                 .code(1000)
@@ -42,6 +43,17 @@ public class ChatMessageController {
                 .result(chatMessageService.getMessage(request))
                 .build();
     }
+
+    @GetMapping("/api/chat")
+    public ApiResponse<List<ChatBoxResponse>> getAllMyChatBoxes() {
+        return ApiResponse.<List<ChatBoxResponse>>builder()
+                .code(1000)
+                .message("success")
+                .result(chatMessageService.getAllMyChatBoxes())
+                .build();
+    }
+
+
 
 
 }
