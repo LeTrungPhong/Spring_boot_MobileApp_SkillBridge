@@ -49,6 +49,10 @@ public class ChatMessageService {
     }
 
     public List<ChatResponse> getMessage(ChatHistoryRequest chatHistoryRequest){
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (!username.equals(chatHistoryRequest.getUser1())&&!username.equals(chatHistoryRequest.getUser2())){
+            throw new AppException(ErrorCode.ACCESS_DENIED);
+        }
         Pageable pageable = PageRequest.of(0,10, Sort.by("timestamp").descending());
         if (chatHistoryRequest.getLastTime() == null){
             chatHistoryRequest.setLastTime(LocalDateTime.now());
