@@ -28,7 +28,7 @@
     "Gradle.mobileApp_SkillBridge.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "fix__create__class",
+    "git-widget-placeholder": "Chat",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "node.js.detected.package.eslint": "true",
@@ -59,6 +59,7 @@
       <workItem from="1745408208201" duration="18000" />
       <workItem from="1745686582745" duration="24000" />
       <workItem from="1745728927484" duration="10000" />
+      <workItem from="1746164654775" duration="9000" />
     </task>
     <servers />
   </component>

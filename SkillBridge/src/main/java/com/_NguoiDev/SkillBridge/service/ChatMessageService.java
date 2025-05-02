@@ -42,13 +42,17 @@ public class ChatMessageService {
                 .message(request.getMessage())
                 .timestamp(LocalDateTime.now())
                 .build();
-        if (!request.getSender().equals(SecurityContextHolder.getContext().getAuthentication().getName())){
-            throw new AppException(ErrorCode.SEND_MESSAGE_FAILED);
-        }
+//        if (!request.getSender().equals(SecurityContextHolder.getContext().getAuthentication().getName())){
+//            throw new AppException(ErrorCode.SEND_MESSAGE_FAILED);
+//        }
         return chatMapper.ToChatResponse(repository.save(chatMessage));
     }
 
     public List<ChatResponse> getMessage(ChatHistoryRequest chatHistoryRequest){
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (!username.equals(chatHistoryRequest.getUser1())&&!username.equals(chatHistoryRequest.getUser2())){
+            throw new AppException(ErrorCode.ACCESS_DENIED);
+        }
         Pageable pageable = PageRequest.of(0,10, Sort.by("timestamp").descending());
         if (chatHistoryRequest.getLastTime() == null){
             chatHistoryRequest.setLastTime(LocalDateTime.now());
