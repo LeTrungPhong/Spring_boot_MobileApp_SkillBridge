@@ -42,9 +42,9 @@ public class ChatMessageService {
                 .message(request.getMessage())
                 .timestamp(LocalDateTime.now())
                 .build();
-        if (!request.getSender().equals(SecurityContextHolder.getContext().getAuthentication().getName())){
-            throw new AppException(ErrorCode.SEND_MESSAGE_FAILED);
-        }
+//        if (!request.getSender().equals(SecurityContextHolder.getContext().getAuthentication().getName())){
+//            throw new AppException(ErrorCode.SEND_MESSAGE_FAILED);
+//        }
         return chatMapper.ToChatResponse(repository.save(chatMessage));
     }
 

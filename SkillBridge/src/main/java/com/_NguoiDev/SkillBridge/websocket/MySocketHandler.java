@@ -1,6 +1,8 @@
 package com._NguoiDev.SkillBridge.websocket;
 
 import com._NguoiDev.SkillBridge.dto.request.ChatRequest;
+import com._NguoiDev.SkillBridge.exception.AppException;
+import com._NguoiDev.SkillBridge.exception.ErrorCode;
 import com._NguoiDev.SkillBridge.service.ChatMessageService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 @RequiredArgsConstructor
 public class MySocketHandler extends TextWebSocketHandler {
-    private final Map<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
+    private final Map<WebSocketSession, String> sessions = new ConcurrentHashMap<>();
     private final ChatMessageService chatMessageService;
     private final ObjectMapper mapper = new ObjectMapper();
     @Override
@@ -28,8 +30,8 @@ public class MySocketHandler extends TextWebSocketHandler {
         super.afterConnectionClosed(session, status);
         UsernamePasswordAuthenticationToken auth = (UsernamePasswordAuthenticationToken) session.getAttributes().get("user");
         String username = auth.getPrincipal().toString();
-        sessions.remove(username);
-        System.out.println("Ngắt kết nối WebSocket từ: " + username);
+        sessions.remove(session);
+        if (username!= null) System.out.println("Ngắt kết nối WebSocket từ: " + username);
     }
 
     @Override
@@ -51,7 +53,7 @@ public class MySocketHandler extends TextWebSocketHandler {
             System.out.println(request.toString());
             if (request.getType().equals("JOIN")){
                 String receive = request.getReceiver();
-                sessions.put(receive, session);
+                sessions.put(session, receive);
                 System.out.println("so nguoi ket noi ws la:" +sessions.size());
             }else if (request.getType().equals("CHAT")){
                 sendMessage(request, session);
@@ -65,16 +67,31 @@ public class MySocketHandler extends TextWebSocketHandler {
     public void sendMessage(ChatRequest request, WebSocketSession session) throws IOException {
         UsernamePasswordAuthenticationToken auth = (UsernamePasswordAuthenticationToken) session.getAttributes().get("user");
         String username = auth.getPrincipal().toString();
+        if (!request.getSender().equals(username)) {
+            throw new AppException(ErrorCode.SEND_MESSAGE_FAILED);
+        }
         request.setSender(username);
         chatMessageService.saveMessage(request);
-        WebSocketSession webSocketSession = sessions.get(request.getReceiver());
-        if(webSocketSession != null && webSocketSession.isOpen()){
+        WebSocketSession receiverSession = getWebSocketSessionByChat(request);
+        if(receiverSession != null && receiverSession.isOpen()){
             try {
                 String json = mapper.writeValueAsString(request);
-                webSocketSession.sendMessage(new TextMessage(json));
+                receiverSession.sendMessage(new TextMessage(json));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    private WebSocketSession getWebSocketSessionByChat(ChatRequest request) {
+        for (Map.Entry<WebSocketSession, String> entry : sessions.entrySet()) {
+            if (entry.getValue().equals(request.getSender())) {
+                if (entry.getKey().getAttributes().get("user").equals(request.getReceiver())) {
+                    return entry.getKey();
+                }
+            }
+        }
+        return null;
+
     }
 }
