@@ -38,7 +38,8 @@ public class AssignmentController {
         return ApiResponse.<Void>builder().code(1000).message("success").build();
     }
 
-    @GetMapping("/{classId}")
+    //get All Assignment của giáo viên lớp đó
+    @GetMapping("/teacher/{classId}")
     public ApiResponse<List<AssignmentResponse>> getAllAssignment(@PathVariable int classId) throws IOException {
         return ApiResponse.<List<AssignmentResponse>>builder()
                 .code(1000)
@@ -47,12 +48,30 @@ public class AssignmentController {
                 .build();
     }
 
-    @GetMapping("/{classId}/{assignmentId}")
-    public ApiResponse<AssignmentResponse> getOneAssignment(@PathVariable String assignmentId, @RequestBody(required = false) String username, @PathVariable int classId){
+    @GetMapping("/{classId}")
+    public ApiResponse<List<AssignmentResponse>> getAssignmentsByClassAndStudent(@PathVariable int classId){
+        return ApiResponse.<List<AssignmentResponse>>builder()
+                .result(assignmentService.getAllStudentAssignmentsByClass(classId))
+                .code(1000)
+                .message("success")
+                .build();
+    }
+
+    @GetMapping("/{classId}/{assignmentId}/teacher/{username}")
+    public ApiResponse<AssignmentResponse> getOneAssignment(@PathVariable String assignmentId, @PathVariable String username, @PathVariable int classId){
         return ApiResponse.<AssignmentResponse>builder()
                 .code(1000)
                 .message("success")
-                .result(assignmentService.getAssignmentById(classId, assignmentId, username))
+                .result(assignmentService.getOneAssignmentById(classId, assignmentId, username))
+                .build();
+    }
+
+    @GetMapping("/{classId}/{assignmentId}")
+    public ApiResponse<AssignmentResponse> getOneAssignment(@PathVariable String assignmentId, @PathVariable int classId){
+        return ApiResponse.<AssignmentResponse>builder()
+                .code(1000)
+                .message("success")
+                .result(assignmentService.getOneAssignmentById(classId, assignmentId, null))
                 .build();
     }
 
@@ -126,4 +145,6 @@ public class AssignmentController {
                 .result(assignmentService.getAllMyCreateAssignments())
                 .build();
     }
+
+
 }
