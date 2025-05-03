@@ -18,6 +18,7 @@ public class AssignmentAllSubmitResponse {
     private String description;
     private LocalDateTime deadLine;
     private String createBy;
+    private String classId;
     private List<String> filesName;
     private List<SubmissionResponse> submissionResponses;
 }

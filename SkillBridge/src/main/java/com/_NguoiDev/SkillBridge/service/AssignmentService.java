@@ -88,7 +88,12 @@ public class AssignmentService {
 
     }
 
+    @PreAuthorize("hasAuthority('ROLE_TEACHER')")
     public List<AssignmentResponse> getAllAssignments(int idClass)  {
+        Class aclass = classRepository.findById(idClass).orElseThrow(()->new AppException(ErrorCode.CLASS_NOT_FOUND));
+        if (!aclass.getTeacher().getUser().getUsername().equals(SecurityContextHolder.getContext().getAuthentication().getName())){
+            throw new AppException(ErrorCode.ACCESS_DENIED);
+        }
         List<Assignment> assignments = assignmentRepository.findAllByaClassId(idClass);
         List<AssignmentResponse> assignmentResponses = new ArrayList<>();
         for (Assignment assignment : assignments) {
@@ -96,8 +101,17 @@ public class AssignmentService {
             a.setFilesName(assignment.getAttachments().stream().map(Attachment::getFileName).toList());
             assignmentResponses.add(a);
         }
+        return assignmentResponses;
+    }
 
-
+    public List<AssignmentResponse> getAllStudentAssignmentsByClass(int idClass)  {
+        List<Assignment> assignments = assignmentRepository.findAllStudentAssignmentByClass(idClass, SecurityContextHolder.getContext().getAuthentication().getName());
+        List<AssignmentResponse> assignmentResponses = new ArrayList<>();
+        for (Assignment assignment : assignments) {
+            AssignmentResponse a = assignmentMapper.toAssignmentResponse(assignment);
+            a.setFilesName(assignment.getAttachments().stream().map(Attachment::getFileName).toList());
+            assignmentResponses.add(a);
+        }
         return assignmentResponses;
     }
 
@@ -125,7 +139,7 @@ public class AssignmentService {
         return assignmentResponses;
     }
 
-    public AssignmentResponse getAssignmentById(int classId, String id, String username)  {
+    public AssignmentResponse getOneAssignmentById(int classId, String id, String username)  {
         if (username==null){
             username = SecurityContextHolder.getContext().getAuthentication().getName();
         }else{

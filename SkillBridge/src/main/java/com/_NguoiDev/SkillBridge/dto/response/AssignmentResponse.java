@@ -19,6 +19,7 @@ public class AssignmentResponse {
     private String description;
     private LocalDateTime deadLine;
     private String createBy;
+    private String classId;
     private List<String> filesName;
     private SubmissionResponse submission;
 }
