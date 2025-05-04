@@ -7,19 +7,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Post {
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    
-    private String title;
     
     @Column(columnDefinition = "TEXT")
     private String content;
@@ -28,13 +25,10 @@ public class Post {
     private LocalDateTime createdAt;
     
     @ManyToOne
-    @JoinColumn(name = "class_id")
-    private Class classEntity;
+    @JoinColumn(name = "post_id")
+    private Post post;
     
     @ManyToOne
-    @JoinColumn(name = "teacher_id")
-    private Teacher teacher;
-    
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    private List<Comment> comments;
+    @JoinColumn(name = "user_id")
+    private User user;
 } 
