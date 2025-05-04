@@ -39,4 +39,7 @@ public class Class {
 
     @OneToMany(mappedBy = "aClass", cascade = CascadeType.ALL)
     private List<Assignment> assignments;
+    
+    @OneToMany(mappedBy = "classEntity", cascade = CascadeType.ALL)
+    private List<Post> posts;
 } 

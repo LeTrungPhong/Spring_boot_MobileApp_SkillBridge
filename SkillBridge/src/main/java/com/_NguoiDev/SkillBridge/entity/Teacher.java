@@ -27,5 +27,7 @@ public class Teacher {
 
     @OneToMany(mappedBy = "teacher")
     private List<Class> classes;
-
+    
+    @OneToMany(mappedBy = "teacher")
+    private List<Post> posts;
 }
