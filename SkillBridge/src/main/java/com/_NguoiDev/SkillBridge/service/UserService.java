@@ -13,15 +13,14 @@ import com._NguoiDev.SkillBridge.exception.ErrorCode;
 import com._NguoiDev.SkillBridge.mapper.StudentMapper;
 import com._NguoiDev.SkillBridge.mapper.TeacherMapper;
 import com._NguoiDev.SkillBridge.mapper.UserMapper;
-import com._NguoiDev.SkillBridge.repository.AuthorityRepository;
-import com._NguoiDev.SkillBridge.repository.StudentRepository;
-import com._NguoiDev.SkillBridge.repository.TeacherRepository;
-import com._NguoiDev.SkillBridge.repository.UserRepository;
+import com._NguoiDev.SkillBridge.repository.*;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +31,7 @@ public class UserService {
     StudentRepository studentRepository;
     TeacherRepository teacherRepository;
     AuthorityRepository authorityRepository;
+    ChatMessageRepository chatMessageRepository;
 
     UserMapper userMapper;
     StudentMapper studentMapper;
@@ -80,5 +80,17 @@ public class UserService {
                 .build());
 
         return userMapper.toUserResponse(request);
+    }
+
+    public List<User> findAllUsernameNot(String username) {
+        return userRepository.findByUsernameNot(username);
+    }
+
+    public List<User> findAllUsernameNotAndHasMessage(String username) {
+        return userRepository.findUsersChattedWith(username);
+    }
+
+    public List<User> findUserByUsername(String username) {
+        return userRepository.findByUsername(username).stream().toList();
     }
 }

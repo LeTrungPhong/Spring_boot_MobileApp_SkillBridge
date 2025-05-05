@@ -114,15 +114,23 @@ public class AttendanceCheckServiceImpl implements AttendanceCheckService {
     }
 
     @Override
-    public List<AttendanceCheckResponse> getAttendancesByStudent(int studentId) {
+    public List<AttendanceCheckResponse> getAttendancesByStudent(int studentId, int classId) {
         // Check if student exists
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new AppException(ErrorCode.STUDENT_NOT_EXISTED));
-        
-        // Get attendances for student
-        return attendanceCheckRepository.findByStudent(student).stream()
+
+        List<AttendanceCheckResponse> listAttendance = attendanceCheckRepository.findByStudentIdAndClassId(studentId, classId).stream()
                 .map(this::mapToAttendanceCheckResponse)
                 .collect(Collectors.toList());
+
+//        for (AttendanceCheckResponse attendanceCheckResponse : listAttendance) {
+//            if (lessonRepository.findLessonById(attendanceCheckResponse.getLessonId()).getClassEntity().getId() != classId) {
+//                listAttendance.remove(attendanceCheckResponse);
+//            }
+//        }
+        
+        // Get attendances for student
+        return listAttendance;
     }
 
     @Override

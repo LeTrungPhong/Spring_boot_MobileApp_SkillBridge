@@ -11,12 +11,14 @@ import com._NguoiDev.SkillBridge.service.ChatMessageService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -35,8 +37,17 @@ public class ChatMessageController {
                 .build();
     }
 
-    @PostMapping("/api/chat")
-    public ApiResponse<List<ChatResponse>> getMessage(@RequestBody ChatHistoryRequest request) {
+    @GetMapping("/api/message")
+    public ApiResponse<List<ChatResponse>> getMessage(@RequestParam String user1,
+                                                      @RequestParam String user2,
+                                                      @RequestParam(required = false)
+                                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime lastTime) {
+        ChatHistoryRequest request = ChatHistoryRequest.builder()
+                .user1(user1)
+                .user2(user2)
+                .lastTime(lastTime)
+                .build();
+
         return ApiResponse.<List<ChatResponse>>builder()
                 .code(1000)
                 .message("success")
@@ -53,7 +64,18 @@ public class ChatMessageController {
                 .build();
     }
 
+    @GetMapping("/api/lastmessage")
+    public ApiResponse<ChatResponse> getMessage(@RequestParam String user1,
+                                                @RequestParam String user2) {
+        ChatHistoryRequest request = ChatHistoryRequest.builder()
+                .user1(user1)
+                .user2(user2)
+                .build();
 
-
-
+        return ApiResponse.<ChatResponse>builder()
+                .code(1000)
+                .message("success")
+                .result(chatMessageService.getLastMessage(request))
+                .build();
+    }
 }

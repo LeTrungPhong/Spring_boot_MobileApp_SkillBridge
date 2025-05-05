@@ -62,6 +62,14 @@ public class ChatMessageService {
         return repository.getPreviousMessages(chatHistoryRequest.getUser1(), chatHistoryRequest.getUser2(), chatHistoryRequest.getLastTime(), pageable).stream().map(chatMapper::ToChatResponse).collect(Collectors.toList());
     }
 
+    public ChatResponse getLastMessage(ChatHistoryRequest chatHistoryRequest){
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (!username.equals(chatHistoryRequest.getUser1())&&!username.equals(chatHistoryRequest.getUser2())){
+            throw new AppException(ErrorCode.ACCESS_DENIED);
+        }
+        return chatMapper.ToChatResponse(repository.getLastMessage(chatHistoryRequest.getUser1(), chatHistoryRequest.getUser2()).get(0));
+    }
+
     public List<ChatBoxResponse> getAllMyChatBoxes(){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         if (!userRepository.existsByUsername(username)){
