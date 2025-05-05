@@ -24,6 +24,12 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> 
                                                  @Param("lastTime") LocalDateTime lastTime,
                                           Pageable pageable);
 
+    @Query("SELECT m FROM ChatMessage m " +
+            "WHERE ((m.sender.username = :sender AND m.receiver.username = :receiver) " +
+            "   OR (m.sender.username = :receiver AND m.receiver.username = :sender)) " +
+            "ORDER BY m.timestamp DESC")
+    List<ChatMessage> getLastMessage(@Param("sender") String sender, @Param("receiver") String receiver);
+
     @Query("select cm from ChatMessage cm " +
             "where cm.id IN (" +
             "select MAX(cm2.id) from ChatMessage cm2 " +
