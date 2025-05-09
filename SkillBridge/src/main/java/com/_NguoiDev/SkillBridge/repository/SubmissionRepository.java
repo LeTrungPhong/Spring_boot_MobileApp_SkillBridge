@@ -10,6 +10,6 @@ import java.util.Optional;
 @Repository
 public interface SubmissionRepository extends JpaRepository<Submission, String> {
     Optional<Submission> getSubmissionById(String id);
-    Optional<Submission> getSubmissionByUserUsername(String username);
+    Optional<Submission> getSubmissionByAssignmentIdAndUserUsername(String assignmentId, String username);
     List<Submission> findAllByAssignmentId(String assignmentId);
 }
