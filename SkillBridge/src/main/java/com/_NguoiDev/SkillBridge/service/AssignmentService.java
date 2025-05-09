@@ -160,7 +160,7 @@ public class AssignmentService {
         }
         assignmentResponse.setFilesName(urls);
 
-        Submission submission = submissionRepository.getSubmissionByUserUsername(username).orElse(null);
+        Submission submission = submissionRepository.getSubmissionByAssignmentIdAndUserUsername(id, username).orElse(null);
         if (submission == null) { assignmentResponse.setSubmission(null); }
         else
             assignmentResponse.setSubmission(submissionService.getSubmissionById(submission.getId()));
