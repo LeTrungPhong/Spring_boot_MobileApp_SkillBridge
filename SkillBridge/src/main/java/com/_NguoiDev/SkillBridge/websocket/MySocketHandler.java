@@ -77,6 +77,8 @@ public class MySocketHandler extends TextWebSocketHandler {
             try {
                 String json = mapper.writeValueAsString(request);
                 receiverSession.sendMessage(new TextMessage(json));
+                System.out.println("send message to receiver: " + json);
+                System.out.println(receiverSession.toString());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -84,9 +86,13 @@ public class MySocketHandler extends TextWebSocketHandler {
     }
 
     private WebSocketSession getWebSocketSessionByChat(ChatRequest request) {
+        System.out.println("getWebSocketSessionByChat"+request.getSender()); //student1
         for (Map.Entry<WebSocketSession, String> entry : sessions.entrySet()) {
             if (entry.getValue().equals(request.getSender())) {
-                if (entry.getKey().getAttributes().get("user").equals(request.getReceiver())) {
+                System.out.println("getWebSocketSessionByChat"+entry.getKey()); //key cua student2
+                UsernamePasswordAuthenticationToken auth = (UsernamePasswordAuthenticationToken) entry.getKey().getAttributes().get("user");
+                String username = auth.getPrincipal().toString();
+                if (username.equals(request.getReceiver())) {
                     return entry.getKey();
                 }
             }
