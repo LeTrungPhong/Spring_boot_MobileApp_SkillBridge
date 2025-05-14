@@ -50,9 +50,9 @@ public class PostController {
     
     @DeleteMapping("/{postId}")
     public ResponseEntity<Void> deletePost(
-            @PathVariable int postId,
-            @AuthenticationPrincipal UserDetails userDetails) {
-        postService.deletePost(postId, userDetails.getUsername());
+            @PathVariable int postId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        postService.deletePost(postId, authentication.getName());
         return ResponseEntity.noContent().build();
     }
 } 
