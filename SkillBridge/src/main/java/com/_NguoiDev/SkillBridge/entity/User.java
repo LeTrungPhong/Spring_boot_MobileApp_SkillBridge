@@ -30,4 +30,12 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "assignmentId")
     )
     private Set<Assignment> assignments;
+
+    @ManyToMany
+    @JoinTable(
+            name = "userNotification",
+            joinColumns = @JoinColumn(name = "username"),
+            inverseJoinColumns = @JoinColumn(name = "notificationId")
+    )
+    private Set<MyNotification> notifications;
 }

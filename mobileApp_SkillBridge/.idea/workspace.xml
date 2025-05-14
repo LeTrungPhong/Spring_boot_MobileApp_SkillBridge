@@ -4,7 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bf2d9b05-5693-4f0e-b726-9fb2cc1fa5fe" name="Changes" comment="" />
+    <list default="true" id="bf2d9b05-5693-4f0e-b726-9fb2cc1fa5fe" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../pbl5_testsocket/pbl5_testSocket/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../pbl5_testsocket/pbl5_testSocket/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../pbl5_testsocket/pbl5_testSocket/.idea/encodings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../pbl5_testsocket/pbl5_testSocket/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../pbl5_testsocket/pbl5_testSocket/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../pbl5_testsocket/pbl5_testSocket/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../pbl5_testsocket/pbl5_testSocket/src/main/resources/META-INF/maven/archetype.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../pbl5_testsocket/pbl5_testSocket/src/main/resources/archetype-resources/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../pbl5_testsocket/pbl5_testSocket/src/main/resources/archetype-resources/src/main/java/App.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../pbl5_testsocket/pbl5_testSocket/src/main/resources/archetype-resources/src/test/java/AppTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SkillBridge/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../SkillBridge/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -21,28 +34,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Gradle.mobileApp_SkillBridge.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "D:/HK6/lap trinh di dong/mobileApp_SkillBridge",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Gradle.mobileApp_SkillBridge.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;FixAssignment&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/HK6/lap trinh di dong/mobileApp_SkillBridge&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-125ca727e0f0-intellij.indexing.shared.core-IU-243.23654.189" />
-        <option value="bundled-js-predefined-d6986cc7102b-822845ee3bb5-JavaScript-IU-243.23654.189" />
+        <option value="bundled-jdk-9823dce3aa75-a94e463ab2e7-intellij.indexing.shared.core-IU-243.25659.59" />
+        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-IU-243.25659.59" />
       </set>
     </attachedChunks>
   </component>
@@ -59,6 +72,10 @@
       <workItem from="1745686582745" duration="24000" />
       <workItem from="1745728927484" duration="10000" />
       <workItem from="1746164654775" duration="9000" />
+      <workItem from="1746800660677" duration="34000" />
+      <workItem from="1746800703052" duration="20000" />
+      <workItem from="1746800736582" duration="15000" />
+      <workItem from="1746800769941" duration="13000" />
     </task>
     <servers />
   </component>

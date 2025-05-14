@@ -2,19 +2,17 @@ package com._NguoiDev.SkillBridge.service.impl;
 
 import com._NguoiDev.SkillBridge.dto.request.PostRequest;
 import com._NguoiDev.SkillBridge.dto.response.PostResponse;
+import com._NguoiDev.SkillBridge.entity.*;
 import com._NguoiDev.SkillBridge.entity.Class;
-import com._NguoiDev.SkillBridge.entity.Post;
-import com._NguoiDev.SkillBridge.entity.Teacher;
-import com._NguoiDev.SkillBridge.entity.User;
 import com._NguoiDev.SkillBridge.exception.AppException;
 import com._NguoiDev.SkillBridge.exception.ErrorCode;
-import com._NguoiDev.SkillBridge.repository.ClassRepository;
-import com._NguoiDev.SkillBridge.repository.PostRepository;
-import com._NguoiDev.SkillBridge.repository.TeacherRepository;
-import com._NguoiDev.SkillBridge.repository.UserRepository;
+import com._NguoiDev.SkillBridge.repository.*;
+import com._NguoiDev.SkillBridge.service.FirebaseMessagingService;
+import com._NguoiDev.SkillBridge.service.NotificationService;
 import com._NguoiDev.SkillBridge.service.PostService;
+import com._NguoiDev.SkillBridge.service.UserDeviceTokenService;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -29,9 +27,12 @@ public class PostServiceImpl implements PostService {
     private final ClassRepository classRepository;
     private final TeacherRepository teacherRepository;
     private final UserRepository userRepository;
+    private final NotificationService notificationService;
+    private final UserDeviceTokenRepository userDeviceTokenRepository;
+    private final FirebaseMessagingService firebaseMessagingService;
 
     @Override
-    public PostResponse createPost(PostRequest request, String username) {
+    public PostResponse createPost(PostRequest request, String username) throws FirebaseMessagingException {
         System.out.println("username: " + username);
         Teacher teacher = teacherRepository.findByUserUsername(username)
                 .orElseThrow(() -> new AppException(ErrorCode.TEACHER_NOT_EXISTED));
@@ -53,7 +54,16 @@ public class PostServiceImpl implements PostService {
                 .build();
         
         Post savedPost = postRepository.save(post);
-        
+        MyNotification notification = MyNotification.builder()
+                .title("Bạn có 1 bài post mới trong lớp" + classEntity.getName())
+                .body(teacher.getName() + "đã đăng 1 bài post mới")
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        String fcmToken = userDeviceTokenRepository.findByUserUsername(username).orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED)).getFcmToken();
+        notificationService.notify(notification, classEntity.getId());
+
+        firebaseMessagingService.sendNotification(fcmToken, notification);
         return mapToResponse(savedPost);
     }
 
