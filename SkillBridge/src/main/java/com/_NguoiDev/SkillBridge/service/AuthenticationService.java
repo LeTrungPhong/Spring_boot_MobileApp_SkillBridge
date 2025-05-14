@@ -13,10 +13,7 @@ import com._NguoiDev.SkillBridge.enums.Role;
 import com._NguoiDev.SkillBridge.exception.AppException;
 import com._NguoiDev.SkillBridge.exception.ErrorCode;
 import com._NguoiDev.SkillBridge.mapper.InformationMapper;
-import com._NguoiDev.SkillBridge.repository.InvalidTokenRepository;
-import com._NguoiDev.SkillBridge.repository.StudentRepository;
-import com._NguoiDev.SkillBridge.repository.TeacherRepository;
-import com._NguoiDev.SkillBridge.repository.UserRepository;
+import com._NguoiDev.SkillBridge.repository.*;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
@@ -47,6 +44,7 @@ public class AuthenticationService {
     InformationMapper informationMapper;
     TeacherRepository teacherRepository;
     StudentRepository studentRepository;
+    UserDeviceTokenService userDeviceTokenService;
 
     @NonFinal
     @Value("${jwt.signerKey}")
@@ -89,6 +87,7 @@ public class AuthenticationService {
 
     }
 
+
     private String generateToken(User user) throws JOSEException {
         JWSHeader jwsHeader = new JWSHeader(JWSAlgorithm.HS512);
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
@@ -119,6 +118,7 @@ public class AuthenticationService {
                     .build();
 
             invalidTokenRepository.save(invalidatedToken);
+            userDeviceTokenService.deleteDeviceToken();
         }catch (AppException exception){
             System.out.println(exception.getMessage());
         }

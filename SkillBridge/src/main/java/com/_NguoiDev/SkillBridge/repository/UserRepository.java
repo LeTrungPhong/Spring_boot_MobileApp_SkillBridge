@@ -22,4 +22,12 @@ public interface UserRepository extends JpaRepository<User, String> {
             "EXISTS (SELECT m FROM ChatMessage m WHERE m.sender = u AND m.receiver.username = :username) " +
             "OR EXISTS (SELECT m FROM ChatMessage m WHERE m.receiver = u AND m.sender.username = :username))")
     List<User> findUsersChattedWith(@Param("username") String username);
+
+    @Query("SELECT u FROM User u WHERE u.username IN (" +
+            "SELECT s.user.username FROM Student s WHERE s.id IN (" +
+            "SELECT sc.student.id FROM StudentClass sc WHERE sc.id.classId = :classId))")
+    List<User> findUserByclassId(@Param("classId") int classId);
+
+    List<User> findAllByAssignments_Id(String assignmentId);
+
 }

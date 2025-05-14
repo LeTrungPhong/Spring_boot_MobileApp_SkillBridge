@@ -206,6 +206,14 @@ public class AssignmentService {
         if (!classRepository.findById(classId).orElseThrow(()->new AppException(ErrorCode.CLASS_NOT_FOUND)).getTeacher().getUser().getUsername().equals(SecurityContextHolder.getContext().getAuthentication().getName())){
             throw new AppException(ErrorCode.ACCESS_DENIED);
         }
-        assignmentRepository.delete(assignmentRepository.getAssignmentsById(assignmentId).orElseThrow(()->new AppException(ErrorCode.ASSIGNMENT_NOT_FOUND)));
+        List<User> users = userRepository.findAllByAssignments_Id(assignmentId);
+        Assignment assignment = assignmentRepository.getAssignmentsById(assignmentId).orElseThrow(()->new AppException(ErrorCode.ASSIGNMENT_NOT_FOUND));
+        for (User user : users) {
+            Set<Assignment> assignments= user.getAssignments();
+            assignments.remove(assignment);
+            user.setAssignments(assignments);
+            userRepository.save(user);
+        }
+        assignmentRepository.delete(assignment);
     }
 }

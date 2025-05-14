@@ -5,6 +5,7 @@ import com._NguoiDev.SkillBridge.dto.response.PostResponse;
 import com._NguoiDev.SkillBridge.exception.AppException;
 import com._NguoiDev.SkillBridge.exception.ErrorCode;
 import com._NguoiDev.SkillBridge.service.PostService;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,7 @@ public class PostController {
     
     @PostMapping
     public ResponseEntity<PostResponse> createPost(
-            @RequestBody PostRequest request) {
+            @RequestBody PostRequest request) throws FirebaseMessagingException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
