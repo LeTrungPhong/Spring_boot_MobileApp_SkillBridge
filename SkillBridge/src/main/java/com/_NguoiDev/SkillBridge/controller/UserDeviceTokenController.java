@@ -8,6 +8,7 @@ import com._NguoiDev.SkillBridge.service.UserDeviceTokenService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,6 +21,15 @@ public class UserDeviceTokenController {
     @PostMapping("/fcmtoken")
     public ApiResponse<Void> saveFcmToken(@RequestBody UserDeviceTokenRequest request) {
         userDeviceTokenService.SaveDeviceToken(request);
+        return ApiResponse.<Void>builder()
+                .code(1000)
+                .message("success")
+                .build();
+    }
+
+    @DeleteMapping("/fcmtoken")
+    public ApiResponse<Void> deleteFcmToken(@RequestBody UserDeviceTokenRequest request) {
+        userDeviceTokenService.deleteDeviceToken(request);
         return ApiResponse.<Void>builder()
                 .code(1000)
                 .message("success")

@@ -18,7 +18,7 @@ public class UserDeviceToken {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String fcmToken;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "username")
     private User user;
 }

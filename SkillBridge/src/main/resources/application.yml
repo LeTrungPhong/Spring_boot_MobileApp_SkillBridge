@@ -8,8 +8,8 @@ spring:
 #    url: "jdbc:mysql://localhost:3306/skill_bridge?createDatabaseIfNotExist=true"
     url: "jdbc:mysql://localhost:3306/skill_bridge?createDatabaseIfNotExist=true"
     username: root
-#    password: 110204
-    password: phong123
+    password: 110204
+#    password: phong123
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:

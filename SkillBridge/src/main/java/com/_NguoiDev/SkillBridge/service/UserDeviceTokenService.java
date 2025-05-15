@@ -30,9 +30,9 @@ public class UserDeviceTokenService {
         userDeviceTokenRepository.save(userDeviceToken);
     }
 
-    public void deleteDeviceToken() {
+    public void deleteDeviceToken(UserDeviceTokenRequest deviceToken) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        userDeviceTokenRepository.delete(userDeviceTokenRepository.findByUserUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
+        userDeviceTokenRepository.delete(userDeviceTokenRepository.findByUserUsernameAndFcmToken(username, deviceToken.getFcmToken()).orElseThrow(() ->new AppException(ErrorCode.DELETE_FCMTOKEN_FAILED)));
     }
 
 }

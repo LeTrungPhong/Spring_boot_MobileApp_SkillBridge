@@ -1,6 +1,7 @@
 package com._NguoiDev.SkillBridge.service;
 
 import com._NguoiDev.SkillBridge.entity.MyNotification;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
@@ -23,6 +24,6 @@ public class FirebaseMessagingService {
                 .setToken(fcmToken)
                 .build();
 
-        return FirebaseMessaging.getInstance().send(message);
+        return FirebaseMessaging.getInstance(FirebaseApp.getInstance("skill-bridge")).send(message);
     }
 }

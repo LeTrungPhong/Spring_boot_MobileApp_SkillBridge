@@ -2,7 +2,11 @@ package com._NguoiDev.SkillBridge.service;
 
 import com._NguoiDev.SkillBridge.entity.MyNotification;
 import com._NguoiDev.SkillBridge.entity.User;
+import com._NguoiDev.SkillBridge.entity.UserDeviceToken;
+import com._NguoiDev.SkillBridge.exception.AppException;
+import com._NguoiDev.SkillBridge.exception.ErrorCode;
 import com._NguoiDev.SkillBridge.repository.*;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -17,16 +21,28 @@ import java.util.Set;
 public class NotificationService {
     NotificationRepository notificationRepository;
     UserRepository userRepository;
+    UserDeviceTokenRepository userDeviceTokenRepository;
+    FirebaseMessagingService firebaseMessagingService;
 
-    public void notify(MyNotification notification, int classId) {
+    public void notify(MyNotification notification, int classId) throws FirebaseMessagingException {
         notificationRepository.save(notification);
         List<User> recipients = userRepository.findUserByclassId(classId);
         for (User recipient : recipients) {
+            String username = recipient.getUsername();
+            List<UserDeviceToken> userDeviceTokens = userDeviceTokenRepository.findByUserUsername(username);
+            if (!userDeviceTokens.isEmpty()) {
+                for (UserDeviceToken deviceToken : userDeviceTokens) {
+                    String fcmToken  = deviceToken.getFcmToken();
+                    firebaseMessagingService.sendNotification(fcmToken, notification);
+                }
+            }
+
             Set<MyNotification> notificationSet = recipient.getNotifications();
             notificationSet.add(notification);
             recipient.setNotifications(notificationSet);
             userRepository.save(recipient);
         }
+
     }
 
 }
