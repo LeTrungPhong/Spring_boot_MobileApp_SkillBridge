@@ -118,7 +118,6 @@ public class AuthenticationService {
                     .build();
 
             invalidTokenRepository.save(invalidatedToken);
-            userDeviceTokenService.deleteDeviceToken();
         }catch (AppException exception){
             System.out.println(exception.getMessage());
         }
