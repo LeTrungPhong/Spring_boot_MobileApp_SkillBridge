@@ -28,7 +28,8 @@ public enum ErrorCode {
     SEND_MESSAGE_FAILED(1013, "Send message failed", HttpStatus.FORBIDDEN),
     POST_NOT_FOUND(1014, "Post not found", HttpStatus.NOT_FOUND),
     COMMENT_NOT_FOUND(1015, "Comment not found", HttpStatus.NOT_FOUND),
-    DELETE_FCMTOKEN_FAILED(1016, "Delete FCMtoken failed", HttpStatus.INTERNAL_SERVER_ERROR),;
+    DELETE_FCMTOKEN_FAILED(1016, "Delete FCMtoken failed", HttpStatus.INTERNAL_SERVER_ERROR),
+    INVALID_GRADE(1017, "Grade must be between 0 and 100", HttpStatus.BAD_REQUEST);
 
     private int code;
     private String message;

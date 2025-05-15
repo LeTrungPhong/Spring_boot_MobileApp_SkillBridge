@@ -1,6 +1,7 @@
 package com._NguoiDev.SkillBridge.controller;
 
 import com._NguoiDev.SkillBridge.dto.request.AssignmentRequest;
+import com._NguoiDev.SkillBridge.dto.request.GradeSubmissionRequest;
 import com._NguoiDev.SkillBridge.dto.request.SubmissionRequest;
 import com._NguoiDev.SkillBridge.dto.response.ApiResponse;
 import com._NguoiDev.SkillBridge.dto.response.AssignmentAllSubmitResponse;
@@ -146,5 +147,36 @@ public class AssignmentController {
                 .build();
     }
 
+    @GetMapping("/{classId}/{assignmentId}/submissions")
+    public ApiResponse<List<SubmissionResponse>> getSubmissionsByAssignment(@PathVariable int classId, @PathVariable String assignmentId) {
+        return ApiResponse.<List<SubmissionResponse>>builder()
+                .code(1000)
+                .message("success")
+                .result(submissionService.getSubmissionsByAssignmentId(assignmentId))
+                .build();
+    }
+    
+    @GetMapping("/{classId}/{assignmentId}/submission/{submissionId}")
+    public ApiResponse<SubmissionResponse> getSubmissionById(@PathVariable int classId, 
+                                                            @PathVariable String assignmentId,
+                                                            @PathVariable String submissionId) {
+        return ApiResponse.<SubmissionResponse>builder()
+                .code(1000)
+                .message("success")
+                .result(submissionService.getSubmissionById(submissionId))
+                .build();
+    }
+    
+    @PutMapping("/{classId}/{assignmentId}/submission/{submissionId}/grade")
+    public ApiResponse<SubmissionResponse> gradeSubmission(@PathVariable int classId, 
+                                                          @PathVariable String assignmentId,
+                                                          @PathVariable String submissionId,
+                                                          @RequestBody GradeSubmissionRequest request) {
+        return ApiResponse.<SubmissionResponse>builder()
+                .code(1000)
+                .message("success")
+                .result(submissionService.gradeSubmission(submissionId, request.getPoint()))
+                .build();
+    }
 
 }
