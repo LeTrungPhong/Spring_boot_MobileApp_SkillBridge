@@ -27,10 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -98,10 +95,11 @@ public class SubmissionService {
         if (username==null){
             username = SecurityContextHolder.getContext().getAuthentication().getName();
         }else {
+            System.out.println(SecurityContextHolder.getContext().getAuthentication().getName());
             teacherRepository.findByUserUsername(SecurityContextHolder.getContext().getAuthentication().getName())
                     .orElseThrow(()->new AppException(ErrorCode.ACCESS_DENIED));
-            if (classRepository.findById(classId).orElseThrow(() -> new AppException(ErrorCode.CLASS_NOT_FOUND))
-                    .getTeacher().getUser().getUsername() != (SecurityContextHolder.getContext().getAuthentication().getName())){
+            if (!Objects.equals(classRepository.findById(classId).orElseThrow(() -> new AppException(ErrorCode.CLASS_NOT_FOUND))
+                    .getTeacher().getUser().getUsername(), SecurityContextHolder.getContext().getAuthentication().getName())){
                 throw new AppException(ErrorCode.ACCESS_DENIED);
             }
         }

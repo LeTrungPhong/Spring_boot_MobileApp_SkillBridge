@@ -18,7 +18,7 @@ public class SkillBridgeApplication {
 	@Bean
 	FirebaseMessaging firebaseMessaging() throws IOException {
 		GoogleCredentials googleCredentials = GoogleCredentials
-				.fromStream(new ClassPathResource("skill-bridge-3c155-firebase-adminsdk-fbsvc-5245c2c804.json").getInputStream());
+				.fromStream(new ClassPathResource("skill-bridge-3c155-firebase-adminsdk-fbsvc-ddbcbd2910.json").getInputStream());
 
 		FirebaseOptions options = new FirebaseOptions.Builder()
 				.setCredentials(googleCredentials)

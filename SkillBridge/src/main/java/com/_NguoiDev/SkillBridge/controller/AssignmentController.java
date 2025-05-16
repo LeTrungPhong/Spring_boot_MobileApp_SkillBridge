@@ -102,12 +102,20 @@ public class AssignmentController {
                 .body(assignmentService.downloadAssignment(classId, assignmentId, fileName));
     }
 
-    @GetMapping("/{classId}/{assignmentId}/result/{fileName}")
-    public ResponseEntity<Resource> downloadSubmitFile(@PathVariable int classId , @PathVariable String assignmentId, @PathVariable String fileName, @RequestBody(required = false) String username) throws MalformedURLException {
+    @GetMapping("/{classId}/{assignmentId}/result/{username}/{fileName}")
+    public ResponseEntity<Resource> downloadSubmitFile(@PathVariable int classId , @PathVariable String assignmentId, @PathVariable String fileName, @PathVariable String username) throws MalformedURLException {
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment, fileName: \""+ fileName+"\"")
                 .body(submissionService.downloadSubmission(classId, assignmentId, fileName, username));
+    }
+
+    @GetMapping("/{classId}/{assignmentId}/result/mySubmit/{fileName}")
+    public ResponseEntity<Resource> downloadMySubmitFile(@PathVariable int classId , @PathVariable String assignmentId, @PathVariable String fileName) throws MalformedURLException {
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment, fileName: \""+ fileName+"\"")
+                .body(submissionService.downloadSubmission(classId, assignmentId, fileName, null));
     }
 
     @DeleteMapping("/{classId}/{assignmentId}")
