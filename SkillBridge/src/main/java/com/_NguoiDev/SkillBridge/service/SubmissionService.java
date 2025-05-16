@@ -128,7 +128,7 @@ public class SubmissionService {
     }
 
     @PreAuthorize("hasAuthority('ROLE_TEACHER')")
-    public SubmissionResponse gradeSubmission(String submissionId, int point) {
+    public SubmissionResponse gradeSubmission(String submissionId, int point, String feedback) {
         User currentUser = userRepository.findById(SecurityContextHolder.getContext().getAuthentication().getName())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         
@@ -153,6 +153,7 @@ public class SubmissionService {
         }
         
         submission.setPoint(point);
+        submission.setFeedback(feedback);
         submissionRepository.save(submission);
         
         return getSubmissionById(submissionId);
