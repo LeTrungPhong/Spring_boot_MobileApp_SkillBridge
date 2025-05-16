@@ -175,7 +175,7 @@ public class AssignmentController {
         return ApiResponse.<SubmissionResponse>builder()
                 .code(1000)
                 .message("success")
-                .result(submissionService.gradeSubmission(submissionId, request.getPoint()))
+                .result(submissionService.gradeSubmission(submissionId, request.getPoint(), request.getFeedback()))
                 .build();
     }
 
