@@ -11,4 +11,5 @@ import lombok.NoArgsConstructor;
 @Builder
 public class GradeSubmissionRequest {
     private int point;
+    private String feedback;
 } 

@@ -19,4 +19,5 @@ public class SubmissionResponse {
     private int status;
     private String submissionBy;
     private int point;
+    private String feedback;
 }

@@ -19,6 +19,9 @@ public class Submission {
     private String id;
     private LocalDateTime submissionTime;
     private int point;
+    
+    @Column(length = 1000)
+    private String feedback;
 
     @ManyToOne
     @JoinColumn(name = "username", referencedColumnName = "username")
