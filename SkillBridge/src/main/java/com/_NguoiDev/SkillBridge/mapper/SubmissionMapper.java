@@ -10,5 +10,7 @@ import org.mapstruct.Mapping;
 public interface SubmissionMapper {
     Submission toSubmission(SubmissionRequest submissionRequest);
     @Mapping(target = "submissionBy", source = "user.username")
+    @Mapping(target = "point", source = "point")
+    @Mapping(target = "feedback", source = "feedback")
     SubmissionResponse toSubmissionResponse(Submission submission);
 }

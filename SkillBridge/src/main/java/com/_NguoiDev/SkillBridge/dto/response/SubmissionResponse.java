@@ -18,4 +18,6 @@ public class SubmissionResponse {
     private List<String> filesNames;
     private int status;
     private String submissionBy;
+    private int point;
+    private String feedback;
 }
