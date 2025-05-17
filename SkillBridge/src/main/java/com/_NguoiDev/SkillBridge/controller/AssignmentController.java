@@ -156,6 +156,17 @@ public class AssignmentController {
                 .build();
     }
 
+
+    @GetMapping("/go/{assignmentId}")
+    public ApiResponse<AssignmentResponse> getAssignmentByNotification(@PathVariable String assignmentId){
+        return ApiResponse.<AssignmentResponse>builder()
+                .code(1000)
+                .message("success")
+                .result(assignmentService.getAssignmentByAssignmentId(assignmentId))
+                .build();
+    }
+
+
     @GetMapping("/{classId}/{assignmentId}/submissions")
     public ApiResponse<List<SubmissionResponse>> getSubmissionsByAssignment(@PathVariable int classId, @PathVariable String assignmentId) {
         return ApiResponse.<List<SubmissionResponse>>builder()
@@ -187,5 +198,6 @@ public class AssignmentController {
                 .result(submissionService.gradeSubmission(submissionId, request.getPoint(), request.getFeedback()))
                 .build();
     }
+
 
 }

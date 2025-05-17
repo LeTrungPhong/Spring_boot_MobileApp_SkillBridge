@@ -181,6 +181,26 @@ public class AssignmentService {
         return assignmentResponse;
     }
 
+    //from notification
+    public AssignmentResponse getAssignmentByAssignmentId(String id)  {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Assignment assignment = assignmentRepository.getAssignmentsById(id)
+                .orElseThrow(()->new AppException(ErrorCode.ASSIGNMENT_NOT_FOUND));
+        AssignmentResponse assignmentResponse = assignmentMapper.toAssignmentResponse(assignment);
+        List<Attachment> attachments = attachRepository.findAllByAssignmentId(assignmentResponse.getId());
+        List<String> urls = new ArrayList<>();
+        for (Attachment attachment : attachments) {
+            urls.add(attachment.getFileName());
+        }
+        assignmentResponse.setFilesName(urls);
+
+        Submission submission = submissionRepository.getSubmissionByAssignmentIdAndUserUsername(id, username).orElse(null);
+        if (submission == null) { assignmentResponse.setSubmission(null); }
+        else
+            assignmentResponse.setSubmission(submissionService.getSubmissionById(submission.getId()));
+        return assignmentResponse;
+    }
+
     public AssignmentAllSubmitResponse getAssignmentListSubmitById(String id, int classId)  {
         teacherRepository.findByUserUsername(SecurityContextHolder.getContext().getAuthentication().getName())
                 .orElseThrow(()->new AppException(ErrorCode.ACCESS_DENIED));
