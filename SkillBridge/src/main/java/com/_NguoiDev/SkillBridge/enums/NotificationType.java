@@ -5,10 +5,10 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum Role {
-    ROLE_STUDENT("STUDENT", "Sinh viên"),
-    ROLE_TEACHER("TEACHER", "Giáo viên");
+public enum NotificationType {
+    POST("POST"),
+    ASSIGNMENT("ASSIGNMENT"),
+    UNKNOW("UNKNOW");
 
-    private final String codeRole;
-    private final String nameRole;
+    private final String nameType;
 }

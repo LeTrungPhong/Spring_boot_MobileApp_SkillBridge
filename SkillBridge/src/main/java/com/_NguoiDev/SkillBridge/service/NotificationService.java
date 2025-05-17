@@ -31,6 +31,7 @@ public class NotificationService {
     NotificationMapper notificationMapper;
 
     public void notify(MyNotification notification, int classId) throws FirebaseMessagingException {
+
         notificationRepository.save(notification);
         List<User> recipients = userRepository.findUserByclassId(classId);
         for (User recipient : recipients) {
