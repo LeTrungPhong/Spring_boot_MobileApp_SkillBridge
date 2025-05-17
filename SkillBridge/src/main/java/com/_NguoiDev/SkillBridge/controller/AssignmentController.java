@@ -155,5 +155,14 @@ public class AssignmentController {
                 .build();
     }
 
+    @GetMapping("/go/{assignmentId}")
+    public ApiResponse<AssignmentResponse> getAssignmentByNotification(@PathVariable String assignmentId){
+        return ApiResponse.<AssignmentResponse>builder()
+                .code(1000)
+                .message("success")
+                .result(assignmentService.getAssignmentByAssignmentId(assignmentId))
+                .build();
+    }
+
 
 }
