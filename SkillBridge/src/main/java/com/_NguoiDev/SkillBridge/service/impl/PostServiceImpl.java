@@ -58,6 +58,8 @@ public class PostServiceImpl implements PostService {
                 .title("Bạn có 1 bài post mới trong lớp " + classEntity.getName())
                 .body(teacher.getName() + " đã đăng 1 bài post mới")
                 .createdAt(LocalDateTime.now())
+                .postId(savedPost.getId())
+                .aClass(classEntity)
                 .build();
 
 

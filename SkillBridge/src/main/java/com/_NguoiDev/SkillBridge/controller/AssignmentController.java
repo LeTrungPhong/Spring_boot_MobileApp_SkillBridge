@@ -8,6 +8,7 @@ import com._NguoiDev.SkillBridge.dto.response.AssignmentResponse;
 import com._NguoiDev.SkillBridge.dto.response.SubmissionResponse;
 import com._NguoiDev.SkillBridge.service.AssignmentService;
 import com._NguoiDev.SkillBridge.service.SubmissionService;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.NonFinal;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,7 +34,7 @@ public class AssignmentController {
     private final SubmissionService submissionService;
     private final AssignmentService assignmentService;
     @PostMapping("/{classId}")
-    public ApiResponse<Void> createAssignment(@ModelAttribute AssignmentRequest request,@PathVariable int classId) throws IOException {
+    public ApiResponse<Void> createAssignment(@ModelAttribute AssignmentRequest request,@PathVariable int classId) throws IOException, FirebaseMessagingException {
         assignmentService.createAssignment(request, classId);
         return ApiResponse.<Void>builder().code(1000).message("success").build();
     }

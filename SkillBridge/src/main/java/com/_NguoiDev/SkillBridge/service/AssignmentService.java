@@ -9,6 +9,7 @@ import com._NguoiDev.SkillBridge.exception.AppException;
 import com._NguoiDev.SkillBridge.exception.ErrorCode;
 import com._NguoiDev.SkillBridge.mapper.AssignmentMapper;
 import com._NguoiDev.SkillBridge.repository.*;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -47,9 +48,11 @@ public class AssignmentService {
     SubmissionRepository submissionRepository;
     SubmissionService submissionService;
     StudentClassRepository studentClassRepository;
+
+    NotificationService notificationService;
     @PreAuthorize("hasAuthority('ROLE_TEACHER')")
     @Transactional
-    public void createAssignment(AssignmentRequest assignmentRequest, int classId) throws IOException {
+    public void createAssignment(AssignmentRequest assignmentRequest, int classId) throws IOException, FirebaseMessagingException {
         Teacher teacher = teacherRepository.findByUserUsername(SecurityContextHolder.getContext().getAuthentication().getName())
                 .orElseThrow(()->new AppException(ErrorCode.TEACHER_NOT_EXISTED));
         Class Aclass = classRepository.findById(classId).orElseThrow(()-> new AppException(ErrorCode.CLASS_NOT_FOUND));
@@ -85,6 +88,17 @@ public class AssignmentService {
             user.setAssignments(assignments);
             userRepository.save(user);
         }
+
+        MyNotification notification = MyNotification.builder()
+                .title("Bạn có 1 bài tập mới trong lớp " + Aclass.getName())
+                .body(teacher.getName() + " đã đăng 1 bài tập mới")
+                .createdAt(LocalDateTime.now())
+                .assignmentId(assignment.getId())
+                .aClass(Aclass)
+                .build();
+
+
+        notificationService.notify(notification, Aclass.getId());
 
     }
 

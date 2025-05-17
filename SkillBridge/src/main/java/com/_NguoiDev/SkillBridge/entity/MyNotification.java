@@ -1,15 +1,13 @@
 package com._NguoiDev.SkillBridge.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -20,4 +18,12 @@ public class MyNotification {
     private String title;
     private String body;
     private LocalDateTime createdAt;
+    @Column(nullable = true)
+    private Integer postId;
+    @Column(nullable = true)
+    private String assignmentId;
+
+    @ManyToOne
+    @JoinColumn(name = "classId")
+    private Class aClass;
 }
